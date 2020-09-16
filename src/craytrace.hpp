@@ -2,9 +2,13 @@
 
 #include <iostream>
 #include <vector>
+#include <memory>
 #define GLM_FORCE_SWIZZLE
-#include "../dependencies/glm/glm.hpp"
+#include <glm/glm.hpp>
+#include <png++/png.hpp>
 
+const int IMAGE_SIZE = 800;
+const float PIXEL_SIZE = 2.0f / IMAGE_SIZE;
 
 struct Ray;
 
@@ -15,13 +19,13 @@ struct Color {
 class Triangle { 
 private:
     glm::vec3 normal;
-    Color color;
 
 public:
     glm::vec4 v1, v2, v3;
+    Color color;
 
-    Triangle(glm::vec4 v1, glm::vec4 v2, glm::vec4 v3, Color color)
-        : v1{v1}, v2{v2}, v3{v3}, color{color}
+    Triangle(glm::vec4 _v1, glm::vec4 _v2, glm::vec4 _v3, Color _color)
+        : v1{_v1}, v2{_v2}, v3{_v3}, color{_color}
     {
         this->normal = glm::cross((v2.xyz()-v1.xyz()), (v3.xyz()-v1.xyz()));
     } 
@@ -31,7 +35,7 @@ public:
 
 struct Ray {
     glm::vec4 start, end;
-    Triangle target;
+    std::shared_ptr<Triangle> target;
     Color color;
     double importance;    
 };
@@ -47,22 +51,24 @@ private:
     std::vector<Triangle> walls;
 
 public:
-    Scene(std::vector<Triangle> walls)
-    : walls{walls} { }
+    Scene(std::vector<Triangle> _walls)
+    : walls{_walls} { }
 
-    void rayIntersection(Ray &ray);
+    void rayIntersection(Ray &ray) const;
 };
 
 class Camera {
 private:
     glm::vec4 primaryEye, secondaryEye;
     bool primaryEyeActive;
-    Pixel image [800][800];
+    // Pixel image [IMAGE_SIZE][IMAGE_SIZE];
 
 public:
-    Camera(glm::vec4 pridmaryEye, glm::vec4 secondaryEye) 
-    : primaryEye{primaryEye}, secondaryEye{secondaryEye}, primaryEyeActive{true} {}
+    Camera(glm::vec4 _primaryEye, glm::vec4 _secondaryEye) 
+    : primaryEye{_primaryEye}, secondaryEye{_secondaryEye}, primaryEyeActive{true} {}
     
-    void render();
+    void render(const Scene&, const char* filename);
+
+    void toggleActiveEye();
 };
 
