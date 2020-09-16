@@ -19,3 +19,16 @@ file(GLOB_RECURSE HEADER_FILES
 
 # Define the executable
 add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SRC_FILES})
+
+# Handle glm
+find_package(glm REQUIRED)
+include_directories(${GLM_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} ${GLM_LIBRARY})
+
+# Handle libpng
+find_package(PNG REQUIRED)
+include_directories(${PNG_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} ${PNG_LIBRARY})
+
+# Handle png++ and other .cmake imports
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
