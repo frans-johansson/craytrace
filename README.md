@@ -2,10 +2,11 @@
 Implementation of a Monte-Carlo raytracer in C++. This project was done for the course TNCG15 at LiU, ITN during the fall of 2020.
 
 ## TODO:
-- [ ] Move class/struct definitions into header files
-- [ ] Create implementation file for class memeber functions
-- [ ] Make triangle verticies public/add getter functions
-- [ ] Get XYZ components from a `glm::DVec4`
+- [x] Move class/struct definitions into header files
+- [x] Create implementation file for class memeber functions
+- [x] Make triangle verticies public/add getter functions
+- [x] Get XYZ components from a `glm::DVec4`
+- [x] Changed dvec to vec
 - [ ] Triangle normals
 - [ ] Implement (simple) rendering loop
   - [ ] Iterate over all pixels
