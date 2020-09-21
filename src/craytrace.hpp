@@ -1,9 +1,10 @@
 #pragma once
+#define GLM_FORCE_SWIZZLE
 
 #include <iostream>
 #include <vector>
+#include <array>
 #include <memory>
-#define GLM_FORCE_SWIZZLE
 #include <glm/glm.hpp>
 #include <png++/png.hpp>
 
@@ -34,10 +35,15 @@ public:
 };
 
 struct Ray {
+    // NOTE: end and target are not set until the ray has intersected a triangle
     glm::vec4 start, end;
+    glm::vec3 direction;
     std::shared_ptr<Triangle> target;
     Color color;
-    double importance;    
+    double importance;
+
+    Ray(glm::vec4 _start, glm::vec3 _direction, double _importance)
+    : start{_start}, direction{_direction}, color{Color{0.0, 0.0, 0.0}}, importance{_importance} {}
 };
 
 struct Pixel {
@@ -61,14 +67,19 @@ class Camera {
 private:
     glm::vec4 primaryEye, secondaryEye;
     bool primaryEyeActive;
-    // Pixel image [IMAGE_SIZE][IMAGE_SIZE];
+    std::array<Pixel, IMAGE_SIZE*IMAGE_SIZE>* image;
 
 public:
-    Camera(glm::vec4 _primaryEye, glm::vec4 _secondaryEye) 
-    : primaryEye{_primaryEye}, secondaryEye{_secondaryEye}, primaryEyeActive{true} {}
+    Camera(glm::vec4 _primaryEye, glm::vec4 _secondaryEye, size_t _samplesPerPixel)
+    : primaryEye{_primaryEye}, secondaryEye{_secondaryEye}, primaryEyeActive{true} {
+        image = new std::array<Pixel, IMAGE_SIZE*IMAGE_SIZE>();
+        image->fill(Pixel{ Color{ 0.0, 0.0, 0.0 }, std::vector<Ray>() });
+    }
     
-    void render(const Scene&, const char* filename);
+    Pixel& getImagePixel(size_t x, size_t y);
 
+    void render(const Scene&);
+    void create_image(const char* filename);
     void toggleActiveEye();
 };
 

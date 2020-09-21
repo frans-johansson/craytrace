@@ -40,32 +40,18 @@ int main() {
         Triangle{ vec4(-3.0, 0.0, 5.0, 1.0), vec4( 0.0,-6.0, 5.0, 1.0), vec4( 0.0,-6.0,-5.0, 1.0), Color{ 1.0, 0.0, 0.5 } }
     };
 
-//      1.0, 1.0, 0.0
-//      1.0, 0.8, 0.0
-//      1.0, 0.0, 0.0
-//      0.8, 0.0, 0.0
-
-//      1.0, 1.0, 0.0
-//      1.0, 0.8, 0.0
-//      1.0, 0.0, 0.0
-//      0.8, 0.0, 0.0
-
-//      1.0, 0.5, 0.0
-//      1.0, 0.2, 0.0
-//      0.0, 1.0, 1.0
-//      0.0, 1.0, 0.8
-
     std::cout << "Running CRaytrace...\n";
 
     // Create the scene
     Scene scene = Scene{ walls };
 
     // Create the camera
-    Camera camera = Camera{ glm::vec4(-2.0, 0.0, 0.0, 1.0), glm::vec4(-1.0, 0.0, 0.0, 1.0) };
+    Camera camera = Camera{ glm::vec4(-2.0, 0.0, 0.0, 1.0), glm::vec4(-1.0, 0.0, 0.0, 1.0), 1 };
     camera.toggleActiveEye();
 
     // Render the scene with the camera
-    camera.render(scene, "test_render.png");
+    camera.render(scene);
+    camera.create_image("test_render.png");
 
     std::cout << "Finished rendering!\n";
 

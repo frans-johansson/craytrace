@@ -5,12 +5,13 @@
 glm::vec3 Triangle::rayIntersection(const Ray& ray) {
         using namespace glm;
         vec3 ps = ray.start.xyz();
-        vec3 pe = ray.end.xyz();
+        // vec3 pe = ray.end.xyz();
 
         vec3 T = ps - this->v1.xyz();
         vec3 E1 = this->v2.xyz() - this->v1.xyz();
         vec3 E2 = this->v3.xyz() - this->v1.xyz();
-        vec3 D = pe-ps;
+        // vec3 D = pe-ps;
+        vec3 D = ray.direction;
         vec3 P = cross(D, E2);
         vec3 Q = cross(T, E1);
 
@@ -29,6 +30,7 @@ void Scene::rayIntersection(Ray &ray) const {
         if (hit.y >= 0.0f && hit.z >= 0.0f && hit.y + hit.z <= 1.0f) {
             ray.end = (1.0f - hit.y - hit.z)*triangle.v1 + hit.y*triangle.v2 + hit.z*triangle.v3;
             ray.target = std::make_shared<Triangle>(triangle);
+            ray.color = triangle.color;
             return;
         }
     }
@@ -36,41 +38,56 @@ void Scene::rayIntersection(Ray &ray) const {
 
 // CAMERA
 
-void Camera::render(const Scene& scene, const char* filename)
+Pixel& Camera::getImagePixel(size_t x, size_t y) {
+    return (*image)[IMAGE_SIZE * y + x];
+}
+
+void Camera::render(const Scene& scene)
 {
-    png::image<png::rgb_pixel> image(IMAGE_SIZE, IMAGE_SIZE);
-    for (size_t y = 0; y < image.get_height(); ++y)
+    for (size_t y = 0; y < IMAGE_SIZE; ++y)
     {
-        for (size_t x = 0; x < image.get_width(); ++x)
+        for (size_t x = 0; x < IMAGE_SIZE; ++x)
         {
             // TODO: Do raytracing here! 😺
             // Spawn a new ray going through the pixel
             glm::vec4 start = this->primaryEyeActive ? this->primaryEye : this->secondaryEye;
-            glm::vec4 end = glm::vec4(0.0, ((float)x-401.0f+0.5f) * PIXEL_SIZE, ((float)y-401.0f+0.5f) * PIXEL_SIZE, 1.0);
+            glm::vec4 pixelCoord = glm::vec4(0.0, ((float)x-401.0f+0.5f) * PIXEL_SIZE, ((float)y-401.0f+0.5f) * PIXEL_SIZE, 1.0);
 
-            Ray ray = Ray{ start, end, nullptr, Color{ 0.0, 0.0, 0.0 }, 1.0 };
+            Ray ray{ start, (pixelCoord-start).xyz(), 1.0 };
             
             // Find the intersecting triangle in the scene
             scene.rayIntersection(ray);
 
-            // Get the color of the ray as R, G, and B
-            png::byte r, g, b;
-            if (ray.target) {
-                r = ray.target->color.r * 255;
-                g = ray.target->color.g * 255;
-                b = ray.target->color.b * 255;
-            } else {
-                std::cout << "Ray did not have a target triangle\n";
-                r = 255;
-                g = 0;
-                b = 255;
+            // Add ray to image pixel
+            getImagePixel(x, y).rays.push_back(ray);
+        }
+    }
+
+}
+
+void Camera::create_image(const char* filename) {
+    png::image<png::rgb_pixel> rgbImage(IMAGE_SIZE, IMAGE_SIZE);
+
+    for (size_t y = 0; y < rgbImage.get_height(); ++y)
+    {
+        for (size_t x = 0; x < rgbImage.get_width(); ++x)
+        {
+            png::rgb_pixel pixelColor{ 0, 0, 0 };
+
+            for (const Ray& ray : getImagePixel(x, y).rays)
+            {
+                // Get the color of the ray as R, G, and B
+                pixelColor.red   += ray.color.r * 255 * ray.importance;
+                pixelColor.green += ray.color.g * 255 * ray.importance;
+                pixelColor.blue  += ray.color.b * 255 * ray.importance;
             }
 
             // Output color to image
-            image[y][x] = png::rgb_pixel(r, g, b);
+            rgbImage[y][x] = pixelColor;
         }
     }
-    image.write(filename);
+
+    rgbImage.write(filename);
 }
 
 void Camera::toggleActiveEye() {
