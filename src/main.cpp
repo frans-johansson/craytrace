@@ -44,6 +44,10 @@ int main() {
 
     // Create the scene
     Scene scene = Scene{ walls };
+    // Add scene objects (Tetrahedron -Moa 🐟) 
+    scene.addTetrahedron(1.0, 1.0, vec4(5.0, 1.5, -1.0, 1.0), std::move(Color{ 1.0, 0.5, 0.0 }));
+    scene.addTetrahedron(1.5, 1.5, vec4(3.5, 0.5, -0.5, 1.0), std::move(Color{ 1.0, 0.0, 0.5 }));
+    scene.addTetrahedron(2.5, 2.5, vec4(6.0, -1.5, -1.5, 1.0), std::move(Color{ 0.6, 1.0, 0.5 }));
 
     // Create the camera
     Camera camera = Camera{ glm::vec4(-2.0, 0.0, 0.0, 1.0), glm::vec4(-1.0, 0.0, 0.0, 1.0), 1 };

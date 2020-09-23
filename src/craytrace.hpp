@@ -5,6 +5,7 @@
 #include <vector>
 #include <array>
 #include <memory>
+#include <limits>
 #include <glm/glm.hpp>
 #include <png++/png.hpp>
 
@@ -61,6 +62,7 @@ public:
     : walls{_walls} { }
 
     void rayIntersection(Ray &ray) const;
+    void addTetrahedron(float width, float height, glm::vec4 m, Color color);
 };
 
 class Camera {

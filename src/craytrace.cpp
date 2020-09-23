@@ -23,18 +23,45 @@ glm::vec3 Triangle::rayIntersection(const Ray& ray) {
 // SCENE
 
 void Scene::rayIntersection(Ray &ray) const {
+    float nearest = FLT_MAX;
+    glm::vec3 bestHit;
+    Triangle bestTriangle{ glm::vec4(), glm::vec4(), glm::vec4(), Color{ 1.0, 0.0, 1.0 } };
+
     for (Triangle triangle : this->walls) {
         glm::vec3 hit = triangle.rayIntersection(ray);
         // std::cout << "u = " << hit.y << " v = " << hit.z << '\n';
         // TODO: Handle a potentially bad hit
-        if (hit.y >= 0.0f && hit.z >= 0.0f && hit.y + hit.z <= 1.0f) {
-            ray.end = (1.0f - hit.y - hit.z)*triangle.v1 + hit.y*triangle.v2 + hit.z*triangle.v3;
-            ray.target = std::make_shared<Triangle>(triangle);
-            ray.color = triangle.color;
-            return;
+        if (hit.x < 0)
+            continue;
+
+        if (hit.y >= 0.0f && hit.z >= 0.0f && hit.y + hit.z <= 1.0f && hit.x < nearest) {
+            bestHit = hit;
+            bestTriangle = triangle;
+            nearest = hit.x;
         }
     }
-} 
+    ray.end = (1.0f - bestHit.y - bestHit.z)*bestTriangle.v1 + bestHit.y*bestTriangle.v2 + bestHit.z*bestTriangle.v3;
+    ray.target = std::make_shared<Triangle>(bestTriangle);
+    ray.color = bestTriangle.color;
+}
+
+void Scene::addTetrahedron(float width, float height, glm::vec4 m, Color color) {
+    using namespace glm;
+    float offset = height/sqrt(2); 
+    vec4 a = m + vec4(0.0, 0.0, height, 0.0);
+    vec4 b = m + vec4(-width, 0.0, 0.0, 0.0);
+    vec4 c = m + vec4(offset, offset, 0.0, 0.0);
+    vec4 d = m + vec4(offset, -offset, 0.0, 0.0);
+
+    std::vector<Triangle> tris{
+        Triangle{ a, b, c, color },
+        Triangle{ a, d, b, color },
+        Triangle{ a, c, d, color },
+        Triangle{ b, d, c, color }
+    };
+
+    this->walls.insert(this->walls.end(), tris.begin(), tris.end());
+}
 
 // CAMERA
 
