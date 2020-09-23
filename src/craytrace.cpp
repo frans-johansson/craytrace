@@ -78,7 +78,7 @@ void Camera::render(const Scene& scene)
             // TODO: Do raytracing here! 😺
             // Spawn a new ray going through the pixel
             glm::vec4 start = this->primaryEyeActive ? this->primaryEye : this->secondaryEye;
-            glm::vec4 pixelCoord = glm::vec4(0.0, ((float)x-401.0f+0.5f) * PIXEL_SIZE, ((float)y-401.0f+0.5f) * PIXEL_SIZE, 1.0);
+            glm::vec4 pixelCoord = glm::vec4(0.0, -((float)x-401.0f+0.5f) * PIXEL_SIZE, -((float)y-401.0f+0.5f) * PIXEL_SIZE, 1.0);
 
             Ray ray{ start, (pixelCoord-start).xyz(), 1.0 };
             
