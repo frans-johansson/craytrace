@@ -1,19 +1,17 @@
 # CRaytrace 🔭
 Implementation of a Monte-Carlo raytracer in C++. This project was done for the course TNCG15 at LiU, ITN during the fall of 2020.
 
+## Issues:
+- RGB values might not be normalized to [0, 255] in some cases
+
 ## TODO:
 - [ ] Implement scene objects
   - [ ] Tetrahedron
   - [ ] Sphere (implicitly with radius)
   - [ ] Handle mutliple ray intersections, using the nearest intersection
 - [ ] Simple local lighting model
+  - [ ] Implement lights in the scene
   - [ ] Check that the triangle normals make sense
-- [ ] Camera should have separate render and create_image functions
-  - [ ] Render: Cast all the rays and calculate the floating point color values of each pixel
-  - [ ] Create image: Convert the floating point RGB values to `png::byte`
-- [x] Save render results to an image
-  - [ ] Convert from `double`-valued colors to 8 bit unsigned integer values
-  - [x] Find a way to push pixel values into some kind of an image format in C++
 
 ## DONE:
 - [x] Walls
@@ -30,6 +28,25 @@ Implementation of a Monte-Carlo raytracer in C++. This project was done for the 
 - [x] Make triangle verticies public/add getter functions
 - [x] Get XYZ components from a `glm::DVec4`
 - [x] Changed dvec to vec
+- [x] Camera should have separate render and create_image functions
+  - [x] Render: Cast all the rays and calculate the floating point color values of each pixel
+  - [x] Create image: Convert the floating point RGB values to `png::byte`
+- [x] Save render results to an image
+  - [x] Convert from `double`-valued colors to 8 bit unsigned integer values
+  - [x] Find a way to push pixel values into some kind of an image format in C++
+
+## How to terminal (Guide for Dummies *cough* Moa)
+- Go up one directory: `cd ..`
+- List the items in a directory: `ls`
+- List *all* the items: `la`
+- Make a new directory: `mkdir [name]` (e.g. `mkdir build`)
+
+### Building and running
+From the root directory of the project (e.g. `craytrace`)
+1. `cd build`
+2. `cmake ..` (sometimes you need to `rm -rf build/*` from `craytrace` first to restore build)
+3. `cmake --build .`
+4. `./CRaytracer` (or whatever the binary is called. tip: tab is your friend)
 
 Developed by:
 - Frans Johansson
