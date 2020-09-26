@@ -6,12 +6,19 @@ Implementation of a Monte-Carlo raytracer in C++. This project was done for the 
 
 ## TODO:
 - [ ] Implement scene objects
-  - [ ] Tetrahedron
-  - [ ] Sphere (implicitly with radius)
-  - [ ] Handle mutliple ray intersections, using the nearest intersection
-- [ ] Simple local lighting model
-  - [ ] Implement lights in the scene
-  - [ ] Check that the triangle normals make sense
+  - [x] Tetrahedron
+  - [ ] Sphere (implicitly with radius) *MOA*
+  - [x] Handle mutliple ray intersections, using the nearest intersection
+- [ ] Refactor code base
+  - [ ] Separate code into more files
+  - [x] Collect forward-declarations in one header file, which is included first
+  - [x] Replace `Color` with `glm::dvec3`
+  - [ ] Use either `snake_case` or `camelCase` for variables/methods (`PascalCase` for classes)
+- [ ] Shadow rays on "local light check"
+  - Is there an intersection for the ray going from the object to the light source?
+- [ ] Handle "ray trees"
+  - [ ] Spawn more rays when intersecting something reflective/refractive
+  - [ ] Calculate intensity values for the ray by working from the ends to the original ray
 
 ## DONE:
 - [x] Walls
@@ -34,6 +41,9 @@ Implementation of a Monte-Carlo raytracer in C++. This project was done for the 
 - [x] Save render results to an image
   - [x] Convert from `double`-valued colors to 8 bit unsigned integer values
   - [x] Find a way to push pixel values into some kind of an image format in C++
+- [x] Simple local lighting model
+  - [x] Implement lights in the scene
+  - [x] Check that the triangle normals make sense
 
 ## How to terminal (Guide for Dummies *cough* Moa)
 - Go up one directory: `cd ..`
