@@ -1,45 +1,14 @@
 #pragma once
-#define GLM_FORCE_SWIZZLE
-
-#include <iostream>
-#include <vector>
-#include <array>
-#include <memory>
-#include <limits>
-#include <glm/glm.hpp>
-#include <png++/png.hpp>
+#include "dependencies.hpp"
 
 const int IMAGE_SIZE = 800;
 const float PIXEL_SIZE = 2.0f / IMAGE_SIZE;
-
-struct Ray;
-
-struct Color {
-    double r, g, b;
-};
-
-class Triangle { 
-private:
-    glm::vec3 normal;
-
-public:
-    glm::vec4 v1, v2, v3;
-    Color color;
-
-    Triangle(glm::vec4 _v1, glm::vec4 _v2, glm::vec4 _v3, Color _color)
-        : v1{_v1}, v2{_v2}, v3{_v3}, color{_color}
-    {
-        this->normal = glm::cross((v2.xyz()-v1.xyz()), (v3.xyz()-v1.xyz()));
-    } 
-
-    glm::vec3 rayIntersection(const Ray& ray);
-};
 
 struct Ray {
     // NOTE: end and target are not set until the ray has intersected a triangle
     glm::vec4 start, end;
     glm::vec3 direction;
-    std::shared_ptr<Triangle> target;
+    std::shared_ptr<SceneObject> target;
     Color color;
     double importance;
 

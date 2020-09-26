@@ -1,4 +1,4 @@
-#include "craytrace.hpp"
+#include "dependencies.hpp"
 
 int main() {
     using namespace glm;
