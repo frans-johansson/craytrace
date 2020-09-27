@@ -2,7 +2,7 @@
 Implementation of a Monte-Carlo raytracer in C++. This project was done for the course TNCG15 at LiU, ITN during the fall of 2020.
 
 ## Issues:
-- RGB values might not be normalized to [0, 255] in some cases
+- [*Should be resolved*] RGB values might not be normalized to [0, 255] in some cases
 
 ## TODO:
 - [ ] Implement scene objects
@@ -14,6 +14,7 @@ Implementation of a Monte-Carlo raytracer in C++. This project was done for the 
   - [x] Collect forward-declarations in one header file, which is included first
   - [x] Replace `Color` with `glm::dvec3`
   - [ ] Use either `snake_case` or `camelCase` for variables/methods (`PascalCase` for classes)
+  - [x] `Color` convenience methods and constants
 - [ ] Shadow rays on "local light check"
   - Is there an intersection for the ray going from the object to the light source?
 - [ ] Handle "ray trees"
