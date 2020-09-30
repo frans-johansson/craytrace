@@ -39,9 +39,7 @@ struct Sphere;
 //     }
 // };
 
-using Color = glm::dvec3;
-
 // Project header files
-// #include "color.hpp"
+#include "colors.hpp"
 #include "objects.hpp"
 #include "craytrace.hpp"
