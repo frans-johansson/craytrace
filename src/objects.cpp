@@ -1,17 +1,27 @@
 #include "dependencies.hpp"
 
+// SCENE OBJECT
+
+Ray SceneObject::perfectReflection(std::shared_ptr<Ray> incoming) {
+    return Ray{
+        incoming->end,
+        -incoming->direction - 2*glm::dot(this->calculateNormal(incoming->end), -incoming->direction),
+        incoming->importance
+    };
+}
+
 // TRIANGLE
 
-glm::vec3 Triangle::rayIntersection(const Ray& ray) {
+glm::vec3 Triangle::rayIntersection(std::shared_ptr<Ray> ray) {
     using namespace glm;
-    vec3 ps = ray.start.xyz();
-    // vec3 pe = ray.end.xyz();
+    vec3 ps = ray->start.xyz();
+    // vec3 pe = ray->end.xyz();
 
     vec3 T = ps - this->v1.xyz();
     vec3 E1 = this->v2.xyz() - this->v1.xyz();
     vec3 E2 = this->v3.xyz() - this->v1.xyz();
     // vec3 D = pe-ps;
-    vec3 D = ray.direction;
+    vec3 D = ray->direction;
     vec3 P = cross(D, E2);
     vec3 Q = cross(T, E1);
 

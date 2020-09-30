@@ -12,8 +12,16 @@ struct Ray {
     Color color;
     double importance;
 
+    // Ray tree components
+    std::shared_ptr<Ray> parent;
+    std::shared_ptr<Ray> reflectedChild;
+    std::shared_ptr<Ray> refactedChild;
+
     Ray(glm::vec4 _start, glm::vec3 _direction, double _importance)
     : start{_start}, direction{_direction}, color{Color{0.0, 0.0, 0.0}}, importance{_importance} {}
+
+    Ray(glm::vec4 _start, glm::vec4 _end)
+    : start{_start}, end{_end}, direction{end-start}, color{BLACK}, importance{0.0} {}
 
     Color localLighting(const PointLight& light);
 };
@@ -25,19 +33,22 @@ struct Pixel {
 
 class Scene {
 private:
-    std::vector<Triangle> walls;
+    std::vector<std::shared_ptr<Triangle>> triangles;
     std::vector<PointLight> pointLights;
 
 public:
-    Scene(std::vector<Triangle> _walls)
-    : walls{_walls} { }
+    Scene(std::vector<std::shared_ptr<Triangle>> _walls)
+    : triangles{_walls} {}
 
-    void rayIntersection(Ray &ray) const;
-    void addTetrahedron(float width, float height, glm::vec4 m, Color color);
+    Color traceRay(std::shared_ptr<Ray> ray) const;
+
+    std::shared_ptr<SceneObject> rayIntersection(std::shared_ptr<Ray> ray) const;
+    void addTetrahedron(float width, float height, glm::vec4 m, Color color, float reflectiveness);
     //void addSphere(float radius, glm::vec4 m, Color sphereColor);
 
     void addPointLight(PointLight pointLight);
-    Color localLighting(Ray &ray) const;
+    Color localLighting(std::shared_ptr<Ray> ray) const;
+    bool notOccluded(std::shared_ptr<Ray> ray) const;
 };
 
 struct PointLight {
