@@ -3,6 +3,7 @@ Implementation of a Monte-Carlo raytracer in C++. This project was done for the 
 
 ## Issues:
 - [*Should be resolved*] RGB values might not be normalized to [0, 255] in some cases
+- Möller-Trumbore check might fail sometimes due to floating point errors 
 
 ## TODO:
 - [ ] Implement scene objects
