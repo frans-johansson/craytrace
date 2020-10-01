@@ -9,7 +9,7 @@ struct SceneObject {
     virtual glm::vec3 rayIntersection(std::shared_ptr<Ray> ray) = 0;
     virtual glm::vec3 calculateNormal(glm::vec4 p) = 0;
 
-    Ray perfectReflection(std::shared_ptr<Ray> incoming);
+    Ray perfectReflection(Ray incoming);
 };
 
 struct Triangle : SceneObject { 

@@ -5,6 +5,13 @@
 Color Scene::traceRay(std::shared_ptr<Ray> ray) const {
     auto target = this->rayIntersection(ray);
 
+    // TODO: Material properties to determine how much local light contributes to the ray color 🐱‍👤
+    ray->color = this->localLighting(ray) * target->color;
+    
+    if (ray->importance < 0.1) {
+        return ray->color;
+    }
+
     if (target->transparency > 0.0f)
     {
         // TODO: Unimplemented
@@ -19,16 +26,12 @@ Color Scene::traceRay(std::shared_ptr<Ray> ray) const {
     } 
     else if (target->reflectiveness > 0.0f)
     {
-        auto reflected = std::make_shared<Ray>(target->perfectReflection(ray));
+        auto reflected = std::make_shared<Ray>(target->perfectReflection(*ray));
+        reflected->importance *= 0.8;
 
         // TODO: Material properties to determine how much local light contributes to the ray color 🐱‍👤
-        ray->color = this->traceRay(reflected) * reflected->importance; //+ this->localLighting(ray);
+        ray->color += this->traceRay(reflected) * reflected->importance;
     } 
-    else
-    {
-        // TODO: Material properties to determine how much local light contributes to the ray color 🐱‍👤
-        ray->color = this->localLighting(ray) * target->color;
-    }
 
     return ray->color;
 }
@@ -45,9 +48,11 @@ std::shared_ptr<SceneObject> Scene::rayIntersection(std::shared_ptr<Ray> ray) co
     );
 
     for (auto triangle : this->triangles) {
+        if (glm::dot(triangle->calculateNormal(ray->end), ray->direction) > 0.0f)
+            continue;
+
         glm::vec3 hit = triangle->rayIntersection(ray);
-        // std::cout << "u = " << hit.y << " v = " << hit.z << '\n';
-        // TODO: Handle a potentially bad hit
+
         if (hit.x < 0.00001f)
             continue;
 
@@ -112,7 +117,7 @@ bool Scene::notOccluded(std::shared_ptr<Ray> ray) const {
     rayIntersection(ray);
 
     float distance = glm::abs(glm::distance(initial, ray->end));
-    return distance < 0.1;
+    return distance < 0.00001f;
 }
 
 // RAY
@@ -146,7 +151,7 @@ void Camera::render(const Scene& scene)
                 // 4. Spawn a new ray going through the pixel from the camera
                 glm::vec4 start = this->primaryEyeActive ? this->primaryEye : this->secondaryEye;
                 glm::vec4 pixelCoord = glm::vec4(0.0, -((float)x-401.0f+0.5f) * PIXEL_SIZE, -((float)y-401.0f+0.5f) * PIXEL_SIZE, 1.0);
-                auto ray = std::make_shared<Ray>(Ray{ start, (pixelCoord-start).xyz(), 1.0/samplesPerPixel });
+                auto ray = std::make_shared<Ray>(Ray{ start, glm::normalize((pixelCoord-start).xyz()), 1.0/samplesPerPixel });
 
                 // // 5. Find the intersecting triangle or object in the scene and add to ray tree
                 // scene.rayIntersection(ray);

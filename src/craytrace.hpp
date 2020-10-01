@@ -21,7 +21,7 @@ struct Ray {
     : start{_start}, direction{_direction}, color{Color{0.0, 0.0, 0.0}}, importance{_importance} {}
 
     Ray(glm::vec4 _start, glm::vec4 _end)
-    : start{_start}, end{_end}, direction{end-start}, color{BLACK}, importance{0.0} {}
+    : start{_start}, end{_end}, direction{glm::normalize(end-start)}, color{BLACK}, importance{0.0} {}
 
     Color localLighting(const PointLight& light);
 };

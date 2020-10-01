@@ -29,10 +29,10 @@ int main() {
         std::make_shared<Triangle>(Triangle{ vec4( 0.0,-6.0,-5.0, 1.0), vec4( 0.0,-6.0, 5.0, 1.0), vec4(10.0,-6.0,-5.0, 1.0), GREEN }), 
         std::make_shared<Triangle>(Triangle{ vec4( 0.0,-6.0, 5.0, 1.0), vec4(10.0,-6.0, 5.0, 1.0), vec4(10.0,-6.0,-5.0, 1.0), GREEN }),
         // Front walls
-        std::make_shared<Triangle>(Triangle{ vec4(10.0,-6.0, 5.0, 1.0), vec4(13.0, 0.0, 5.0, 1.0), vec4(10.0,-6.0,-5.0, 1.0), BLUE }),
-        std::make_shared<Triangle>(Triangle{ vec4(13.0, 0.0, 5.0, 1.0), vec4(13.0, 0.0,-5.0, 1.0), vec4(10.0,-6.0,-5.0, 1.0), BLUE }),
-        std::make_shared<Triangle>(Triangle{ vec4(10.0, 6.0, 5.0, 1.0), vec4(13.0, 0.0,-5.0, 1.0), vec4(13.0, 0.0, 5.0, 1.0), CYAN }),
-        std::make_shared<Triangle>(Triangle{ vec4(10.0, 6.0, 5.0, 1.0), vec4(10.0, 6.0,-5.0, 1.0), vec4(13.0, 0.0,-5.0, 1.0), CYAN }),
+        std::make_shared<Triangle>(Triangle{ vec4(10.0,-6.0, 5.0, 1.0), vec4(13.0, 0.0, 5.0, 1.0), vec4(10.0,-6.0,-5.0, 1.0), BLUE, 1.0f }),
+        std::make_shared<Triangle>(Triangle{ vec4(13.0, 0.0, 5.0, 1.0), vec4(13.0, 0.0,-5.0, 1.0), vec4(10.0,-6.0,-5.0, 1.0), BLUE, 1.0f }),
+        std::make_shared<Triangle>(Triangle{ vec4(10.0, 6.0, 5.0, 1.0), vec4(13.0, 0.0,-5.0, 1.0), vec4(13.0, 0.0, 5.0, 1.0), CYAN, 1.0f }),
+        std::make_shared<Triangle>(Triangle{ vec4(10.0, 6.0, 5.0, 1.0), vec4(10.0, 6.0,-5.0, 1.0), vec4(13.0, 0.0,-5.0, 1.0), CYAN, 1.0f }),
         // Back walls
         std::make_shared<Triangle>(Triangle{ vec4( 0.0, 6.0, 5.0, 1.0), vec4(-3.0, 0.0,-5.0, 1.0), vec4( 0.0, 6.0,-5.0, 1.0), MAGENTA }),
         std::make_shared<Triangle>(Triangle{ vec4( 0.0, 6.0, 5.0, 1.0), vec4(-3.0, 0.0, 5.0, 1.0), vec4(-3.0, 0.0,-5.0, 1.0), MAGENTA }),
@@ -46,12 +46,12 @@ int main() {
     Scene scene = Scene{ std::move(walls) };
     // Add scene objects (Tetrahedron -Moa 🐟) 
     scene.addTetrahedron(1.0, 1.0, vec4(7.5, 1.0,  1.0, 1.0), std::move(Color{ 1.0, 0.5, 0.0 }), 0.0f);
-    scene.addTetrahedron(1.5, 1.5, vec4(7.5, 1.0, -0.5, 1.0), std::move(Color{ 1.0, 0.0, 0.5 }), 0.0f);
+    scene.addTetrahedron(1.5, 1.5, vec4(7.5, 1.0, -0.5, 1.0), std::move(Color{ 1.0, 0.0, 0.5 }), 1.0f);
     scene.addTetrahedron(2.5, 2.5, vec4(7.5, 1.0, -3.0, 1.0), std::move(Color{ 0.0, 1.0, 0.5 }), 0.0f);
     // Add point lights for local lighting
     scene.addPointLight({ glm::vec4(5.0, 0.0, 4.5, 1.0), 0.2, Color{ 1.0, 1.0, 1.0 } });
-    // scene.addPointLight({ glm::vec4(2.0, 4.0,-4.0, 1.0), 0.8, Color{ 1.0, 0.3, 0.3 } });
-    // scene.addPointLight({ glm::vec4(2.0,-4.0,-4.0, 1.0), 0.5, Color{ 0.3, 0.3, 1.0 } });
+    scene.addPointLight({ glm::vec4(2.0, 4.0,-4.0, 1.0), 0.8, Color{ 1.0, 0.3, 0.3 } });
+    scene.addPointLight({ glm::vec4(2.0,-4.0,-4.0, 1.0), 0.5, Color{ 0.3, 0.3, 1.0 } });
 
     // Create the camera
     Camera camera = Camera{ glm::vec4(-2.0, 0.0, 0.0, 1.0), glm::vec4(-1.0, 0.0, 0.0, 1.0), 1 };

@@ -2,11 +2,11 @@
 
 // SCENE OBJECT
 
-Ray SceneObject::perfectReflection(std::shared_ptr<Ray> incoming) {
+Ray SceneObject::perfectReflection(Ray incoming) {
     return Ray{
-        incoming->end,
-        -incoming->direction - 2*glm::dot(this->calculateNormal(incoming->end), -incoming->direction),
-        incoming->importance
+        incoming.end,
+        glm::reflect(incoming.direction, this->calculateNormal(incoming.end)),
+        incoming.importance
     };
 }
 
