@@ -46,7 +46,7 @@ public:
 
     std::shared_ptr<SceneObject> rayIntersection(std::shared_ptr<Ray> ray) const;
     void addTetrahedron(float width, float height, glm::vec4 m, Color color, float reflectiveness);
-    void addSphere(float radius, glm::vec4 m, Color sphereColor);
+    void addSphere(float radius, glm::vec4 m, Color sphereColor, float reflectiveness);
 
     void addPointLight(PointLight pointLight);
     Color localLighting(std::shared_ptr<Ray> ray) const;

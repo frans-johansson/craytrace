@@ -59,8 +59,8 @@ std::shared_ptr<SceneObject> Scene::rayIntersection(std::shared_ptr<Ray> ray) co
     for (auto sphere : this->spheres) {
         float hit = sphere->rayIntersection(ray);
         
-        if (glm::dot(sphere->calculateNormal(ray->end), ray->direction) > 0.0f)
-            continue;    
+        // if (glm::dot(sphere->calculateNormal(ray->end), ray->direction) > 0.0f)
+        //     continue;    
 
         if (hit > 0.00001f && hit < nearest) {
             nearest = hit;
@@ -90,10 +90,10 @@ void Scene::addTetrahedron(float width, float height, glm::vec4 m, Color color, 
     this->triangles.insert(this->triangles.end(), tris.begin(), tris.end());
 }
 
-void Scene::addSphere(float radius, glm::vec4 m, Color sphereColor)
+void Scene::addSphere(float radius, glm::vec4 m, Color sphereColor, float reflectiveness = 0.0f)
 {
     using namespace glm;
-    this->spheres.push_back(std::make_shared<Sphere>(Sphere{m, radius, sphereColor}));
+    this->spheres.push_back(std::make_shared<Sphere>(Sphere{m, radius, sphereColor, reflectiveness}));
 }
 
 void Scene::addPointLight(PointLight pointLight) {
@@ -105,7 +105,8 @@ Color Scene::localLighting(std::shared_ptr<Ray> ray) const {
     for (const PointLight& light : this->pointLights) {
         auto lightRay = std::make_shared<Ray>(Ray{ light.position, ray->end });
 
-        if (notOccluded(lightRay))
+        // TOFIX: This seems to be causing errors when working with spheres :/
+        // if (notOccluded(lightRay))
             totalLight += ray->localLighting(light);
     }
     return totalLight;
