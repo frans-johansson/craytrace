@@ -46,8 +46,8 @@ std::shared_ptr<SceneObject> Scene::rayIntersection(std::shared_ptr<Ray> ray) co
     for (auto triangle : this->triangles) {
         float hit = triangle->rayIntersection(ray);
 
-        if (glm::dot(triangle->calculateNormal(ray->end), ray->direction) > 0.0f)
-            continue;
+        // if (glm::dot(triangle->calculateNormal(ray->end), ray->direction) > 0.0f)
+        //     continue;
 
         if (hit > 0.00001f && hit < nearest) {
             nearest = hit;
@@ -58,13 +58,13 @@ std::shared_ptr<SceneObject> Scene::rayIntersection(std::shared_ptr<Ray> ray) co
 
     for (auto sphere : this->spheres) {
         float hit = sphere->rayIntersection(ray);
-        
+
         // if (glm::dot(sphere->calculateNormal(ray->end), ray->direction) > 0.0f)
-        //     continue;    
+        //     continue;
 
         if (hit > 0.00001f && hit < nearest) {
-            nearest = hit;
             ray->setEnd(hit);
+            nearest = hit;
             ray->target = sphere;
         }
     }
@@ -104,9 +104,9 @@ Color Scene::localLighting(std::shared_ptr<Ray> ray) const {
     Color totalLight = Color{ 0.0, 0.0, 0.0 };
     for (const PointLight& light : this->pointLights) {
         auto lightRay = std::make_shared<Ray>(Ray{ light.position, ray->end });
+        lightRay->target = ray->target;
 
-        // TOFIX: This seems to be causing errors when working with spheres :/
-        // if (notOccluded(lightRay))
+        if (notOccluded(lightRay))
             totalLight += ray->localLighting(light);
     }
     return totalLight;
@@ -114,12 +114,13 @@ Color Scene::localLighting(std::shared_ptr<Ray> ray) const {
 
 bool Scene::notOccluded(std::shared_ptr<Ray> ray) const {
     // Save inital endpoint
-    glm::vec4 initial = ray->end;
+    // glm::vec4 initial = ray->end;
+    auto initial = ray->target;
     // Calculate potential closer intersections causing occlusion
-    rayIntersection(ray);
+    auto hit = rayIntersection(ray);
 
-    float distance = glm::abs(glm::distance(initial, ray->end));
-    return distance < 0.00001f;
+    // float distance = glm::abs(glm::distance(initial, ray->end));
+    return initial == hit;
 }
 
 // RAY
