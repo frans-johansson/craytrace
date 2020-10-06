@@ -12,7 +12,7 @@ Color Scene::traceRay(std::shared_ptr<Ray> ray) const {
         return ray->color;
     }
 
-    if (target->transparency > 0.0f)
+    if (target->surface == SurfaceType::TRANSPARENT)
     {
         // TODO: Unimplemented
         // // Calculate reflection and refraction coefficients
@@ -24,14 +24,14 @@ Color Scene::traceRay(std::shared_ptr<Ray> ray) const {
         // auto reflected = std::make_shared<Ray>(target->perfectReflection(ray));
         // ray->color = this->traceRay(reflected); // Add local lightning
     } 
-    else if (target->reflectiveness > 0.0f)
+    else if (target->surface == SurfaceType::MIRROR)
     {
         auto reflected = std::make_shared<Ray>(target->perfectReflection(*ray));
         reflected->importance *= 0.8;
 
         // TODO: Material properties to determine how much local light contributes to the ray color 🐱‍👤
         ray->color += this->traceRay(reflected) * reflected->importance;
-    } 
+    }
 
     return ray->color;
 }
@@ -72,7 +72,7 @@ std::shared_ptr<SceneObject> Scene::rayIntersection(std::shared_ptr<Ray> ray) co
     return ray->target;
 }
 
-void Scene::addTetrahedron(float width, float height, glm::vec4 m, Color color, float reflectiveness) {
+void Scene::addTetrahedron(float width, float height, glm::vec4 m, Color color, SurfaceType surface) {
     using namespace glm;
     float offset = height/sqrt(2); 
     vec4 a = m + vec4(0.0, 0.0, height, 0.0);
@@ -81,19 +81,19 @@ void Scene::addTetrahedron(float width, float height, glm::vec4 m, Color color, 
     vec4 d = m + vec4(offset, -offset, 0.0, 0.0);
 
     std::vector<std::shared_ptr<Triangle>> tris{
-        std::make_shared<Triangle>(Triangle{ b, a, c, color, reflectiveness }),
-        std::make_shared<Triangle>(Triangle{ d, a, b, color, reflectiveness }),
-        std::make_shared<Triangle>(Triangle{ c, a, d, color, reflectiveness }),
-        std::make_shared<Triangle>(Triangle{ d, b, c, color, reflectiveness })
+        std::make_shared<Triangle>(Triangle{ b, a, c, color, surface }),
+        std::make_shared<Triangle>(Triangle{ d, a, b, color, surface }),
+        std::make_shared<Triangle>(Triangle{ c, a, d, color, surface }),
+        std::make_shared<Triangle>(Triangle{ d, b, c, color, surface })
     };
 
     this->triangles.insert(this->triangles.end(), tris.begin(), tris.end());
 }
 
-void Scene::addSphere(float radius, glm::vec4 m, Color sphereColor, float reflectiveness = 0.0f)
+void Scene::addSphere(float radius, glm::vec4 m, Color sphereColor, SurfaceType surface)
 {
     using namespace glm;
-    this->spheres.push_back(std::make_shared<Sphere>(Sphere{m, radius, sphereColor, reflectiveness}));
+    this->spheres.push_back(std::make_shared<Sphere>(Sphere{m, radius, sphereColor, surface}));
 }
 
 void Scene::addPointLight(PointLight pointLight) {
