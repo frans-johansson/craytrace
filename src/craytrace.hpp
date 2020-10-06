@@ -18,12 +18,13 @@ struct Ray {
     std::shared_ptr<Ray> refactedChild;
 
     Ray(glm::vec4 _start, glm::vec3 _direction, double _importance)
-    : start{_start}, direction{_direction}, color{Color{0.0, 0.0, 0.0}}, importance{_importance} {}
+    : start{_start}, direction{glm::normalize(_direction)}, color{Color{0.0, 0.0, 0.0}}, importance{_importance} {}
 
     Ray(glm::vec4 _start, glm::vec4 _end)
     : start{_start}, end{_end}, direction{glm::normalize(end-start)}, color{BLACK}, importance{0.0} {}
 
     Color localLighting(const PointLight& light);
+    void setEnd(float t);
 };
 
 struct Pixel {
@@ -33,6 +34,7 @@ struct Pixel {
 
 class Scene {
 private:
+    std::vector<std::shared_ptr<Sphere>> spheres;
     std::vector<std::shared_ptr<Triangle>> triangles;
     std::vector<PointLight> pointLights;
 
@@ -44,7 +46,7 @@ public:
 
     std::shared_ptr<SceneObject> rayIntersection(std::shared_ptr<Ray> ray) const;
     void addTetrahedron(float width, float height, glm::vec4 m, Color color, float reflectiveness);
-    //void addSphere(float radius, glm::vec4 m, Color sphereColor);
+    void addSphere(float radius, glm::vec4 m, Color sphereColor);
 
     void addPointLight(PointLight pointLight);
     Color localLighting(std::shared_ptr<Ray> ray) const;

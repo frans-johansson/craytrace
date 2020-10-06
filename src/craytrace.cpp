@@ -37,36 +37,37 @@ Color Scene::traceRay(std::shared_ptr<Ray> ray) const {
 }
 
 std::shared_ptr<SceneObject> Scene::rayIntersection(std::shared_ptr<Ray> ray) const {
-    // 1. Iterate over all triangels in the scene
-    // 2. Iterate over all spheres in the scene
-    // 3. Return the best hit from 1 and 2 
-
     float nearest = FLT_MAX;
-    glm::vec3 bestHit;
-    std::shared_ptr<Triangle> bestTriangle = std::make_shared<Triangle>(
-        Triangle{ glm::vec4(0.0, 0.0, 0.0, 1.0), glm::vec4(0.0, 0.0, 0.0, 1.0), glm::vec4(0.0, 0.0, 0.0, 1.0), BLACK }
-    );
+    ray->target = std::make_shared<Triangle>(Triangle{
+        glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), MAGENTA
+    });
 
+    // TODO: Make this one single loop
     for (auto triangle : this->triangles) {
+        float hit = triangle->rayIntersection(ray);
+
         if (glm::dot(triangle->calculateNormal(ray->end), ray->direction) > 0.0f)
             continue;
 
-        glm::vec3 hit = triangle->rayIntersection(ray);
-
-        if (hit.x < 0.00001f)
-            continue;
-
-        if (hit.y >= 0.0f && hit.z >= 0.0f && hit.y + hit.z <= 1.0f && hit.x < nearest) {
-            bestHit = hit;
-            bestTriangle = triangle;
-            nearest = hit.x;
+        if (hit > 0.00001f && hit < nearest) {
+            nearest = hit;
+            ray->setEnd(hit);
+            ray->target = triangle;
         }
     }
-    ray->end = (1.0f - bestHit.y - bestHit.z)*bestTriangle->v1 + bestHit.y*bestTriangle->v2 + bestHit.z*bestTriangle->v3;
-    
-    // TODO: Clean this up! 🧼 rayIntersection should not modify members of ray
-    ray->target = bestTriangle;
-    // ray->color = bestTriangle->color;
+
+    for (auto sphere : this->spheres) {
+        float hit = sphere->rayIntersection(ray);
+        
+        if (glm::dot(sphere->calculateNormal(ray->end), ray->direction) > 0.0f)
+            continue;    
+
+        if (hit > 0.00001f && hit < nearest) {
+            nearest = hit;
+            ray->setEnd(hit);
+            ray->target = sphere;
+        }
+    }
 
     return ray->target;
 }
@@ -89,11 +90,11 @@ void Scene::addTetrahedron(float width, float height, glm::vec4 m, Color color, 
     this->triangles.insert(this->triangles.end(), tris.begin(), tris.end());
 }
 
-/*void Scene::addSphere(float radius, vec4 m, Color sphereColor)
+void Scene::addSphere(float radius, glm::vec4 m, Color sphereColor)
 {
-    using namespace ::glm;
-    
-}*/
+    using namespace glm;
+    this->spheres.push_back(std::make_shared<Sphere>(Sphere{m, radius, sphereColor}));
+}
 
 void Scene::addPointLight(PointLight pointLight) {
     this->pointLights.push_back(pointLight);   
@@ -125,8 +126,12 @@ bool Scene::notOccluded(std::shared_ptr<Ray> ray) const {
 Color Ray::localLighting(const PointLight& light) {
     using namespace glm;
     vec3 dirToLight = light.position - this->end;
-    double lightAmount = max(dot(normalize(dirToLight), target->calculateNormal(this->end)), 0.0f);
+    double lightAmount = max(dot(normalize(dirToLight), this->target->calculateNormal(this->end)), 0.0f);
     return light.color * light.intensity * lightAmount / sqrt(length(dvec3(dirToLight)));
+}
+
+void Ray::setEnd(float t) {
+    this->end = glm::vec4(this->start.xyz + this->direction * t, 1.0);
 }
 
 // CAMERA
