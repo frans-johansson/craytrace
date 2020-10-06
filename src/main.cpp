@@ -45,11 +45,11 @@ int main() {
     // Create the scene
     Scene scene = Scene{ std::move(walls) };
     // Add scene objects (Tetrahedron -Moa 🐟) 
-    scene.addTetrahedron(1.0, 1.0, vec4(7.5, 1.0,  1.0, 1.0), std::move(Color{ 1.0, 0.5, 0.0 }));
-    scene.addTetrahedron(1.5, 1.5, vec4(7.5, 1.0, -0.5, 1.0), std::move(Color{ 1.0, 0.0, 0.5 }), SurfaceType::MIRROR);
-    scene.addTetrahedron(2.5, 2.5, vec4(7.5, 1.0, -3.0, 1.0), std::move(Color{ 0.0, 1.0, 0.5 }));
+    scene.addTetrahedron(1.0, 1.0, vec4(7.5, 1.0,  1.0, 1.0), Color{ 1.0, 0.5, 0.0 });
+    scene.addTetrahedron(1.5, 1.5, vec4(7.5, 1.0, -0.5, 1.0), Color{ 1.0, 0.0, 0.5 }, SurfaceType::MIRROR);
+    scene.addTetrahedron(2.5, 2.5, vec4(7.5, 1.0, -3.0, 1.0), Color{ 0.0, 1.0, 0.5 });
     // Add schene objects (Sphere ⚽)
-    scene.addSphere(2.0, vec4(7.5, -2.0,  1.0, 1.0) , MAGENTA);
+    scene.addSphere(2.0, vec4(7.5, -2.2,  0.2, 1.0), MAGENTA, SurfaceType::MIRROR);
     // Add point lights for local lighting
     scene.addPointLight({ glm::vec4(5.0, 0.0, 4.5, 1.0), 0.2, Color{ 1.0, 1.0, 1.0 } });
     scene.addPointLight({ glm::vec4(2.0, 4.0,-4.0, 1.0), 0.8, Color{ 1.0, 0.3, 0.3 } });

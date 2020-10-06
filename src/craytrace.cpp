@@ -2,14 +2,14 @@
 
 // SCENE
 
-Color Scene::traceRay(std::shared_ptr<Ray> ray) const {
+Color Scene::traceRay(Ray& ray) const {
     auto target = this->rayIntersection(ray);
 
     // TODO: Material properties to determine how much local light contributes to the ray color 🐱‍👤
-    ray->color = this->localLighting(ray) * target->color;
+    ray.color = this->localLighting(ray) * target->color;
     
-    if (ray->importance < 0.1) {
-        return ray->color;
+    if (ray.importance < 0.1) {
+        return ray.color;
     }
 
     if (target->surface == SurfaceType::TRANSPARENT)
@@ -22,23 +22,23 @@ Color Scene::traceRay(std::shared_ptr<Ray> ray) const {
 
         // // Handle reflection
         // auto reflected = std::make_shared<Ray>(target->perfectReflection(ray));
-        // ray->color = this->traceRay(reflected); // Add local lightning
+        // ray.color = this->traceRay(reflected); // Add local lightning
     } 
     else if (target->surface == SurfaceType::MIRROR)
     {
-        auto reflected = std::make_shared<Ray>(target->perfectReflection(*ray));
-        reflected->importance *= 0.8;
+        Ray reflected = target->perfectReflection(ray);
+        reflected.importance *= 0.8;
 
         // TODO: Material properties to determine how much local light contributes to the ray color 🐱‍👤
-        ray->color += this->traceRay(reflected) * reflected->importance;
+        ray.color += this->traceRay(reflected) * reflected.importance;
     }
 
-    return ray->color;
+    return ray.color;
 }
 
-std::shared_ptr<SceneObject> Scene::rayIntersection(std::shared_ptr<Ray> ray) const {
+std::shared_ptr<SceneObject> Scene::rayIntersection(Ray& ray) const {
     float nearest = FLT_MAX;
-    ray->target = std::make_shared<Triangle>(Triangle{
+    ray.target = std::make_shared<Triangle>(Triangle{
         glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), MAGENTA
     });
 
@@ -46,30 +46,30 @@ std::shared_ptr<SceneObject> Scene::rayIntersection(std::shared_ptr<Ray> ray) co
     for (auto triangle : this->triangles) {
         float hit = triangle->rayIntersection(ray);
 
-        // if (glm::dot(triangle->calculateNormal(ray->end), ray->direction) > 0.0f)
+        // if (glm::dot(triangle->calculateNormal(ray.end), ray.direction) > 0.0f)
         //     continue;
 
         if (hit > 0.00001f && hit < nearest) {
             nearest = hit;
-            ray->setEnd(hit);
-            ray->target = triangle;
+            ray.setEnd(hit);
+            ray.target = triangle;
         }
     }
 
     for (auto sphere : this->spheres) {
         float hit = sphere->rayIntersection(ray);
 
-        // if (glm::dot(sphere->calculateNormal(ray->end), ray->direction) > 0.0f)
+        // if (glm::dot(sphere->calculateNormal(ray.end), ray.direction) > 0.0f)
         //     continue;
 
         if (hit > 0.00001f && hit < nearest) {
-            ray->setEnd(hit);
+            ray.setEnd(hit);
             nearest = hit;
-            ray->target = sphere;
+            ray.target = sphere;
         }
     }
 
-    return ray->target;
+    return ray.target;
 }
 
 void Scene::addTetrahedron(float width, float height, glm::vec4 m, Color color, SurfaceType surface) {
@@ -100,32 +100,32 @@ void Scene::addPointLight(PointLight pointLight) {
     this->pointLights.push_back(pointLight);   
 }
 
-Color Scene::localLighting(std::shared_ptr<Ray> ray) const {
+Color Scene::localLighting(const Ray& ray) const {
     Color totalLight = Color{ 0.0, 0.0, 0.0 };
     for (const PointLight& light : this->pointLights) {
-        auto lightRay = std::make_shared<Ray>(Ray{ light.position, ray->end });
-        lightRay->target = ray->target;
+        Ray lightRay = Ray{ light.position, ray.end };
+        lightRay.target = ray.target;
 
         if (notOccluded(lightRay))
-            totalLight += ray->localLighting(light);
+            totalLight += ray.localLighting(light);
     }
     return totalLight;
 }
 
-bool Scene::notOccluded(std::shared_ptr<Ray> ray) const {
+bool Scene::notOccluded(Ray& ray) const {
     // Save inital endpoint
-    // glm::vec4 initial = ray->end;
-    auto initial = ray->target;
+    // glm::vec4 initial = ray.end;
+    auto initial = ray.target;
     // Calculate potential closer intersections causing occlusion
     auto hit = rayIntersection(ray);
 
-    // float distance = glm::abs(glm::distance(initial, ray->end));
+    // float distance = glm::abs(glm::distance(initial, ray.end));
     return initial == hit;
 }
 
 // RAY
 
-Color Ray::localLighting(const PointLight& light) {
+Color Ray::localLighting(const PointLight& light) const {
     using namespace glm;
     vec3 dirToLight = light.position - this->end;
     double lightAmount = max(dot(normalize(dirToLight), this->target->calculateNormal(this->end)), 0.0f);
@@ -158,14 +158,14 @@ void Camera::render(const Scene& scene)
                 // 4. Spawn a new ray going through the pixel from the camera
                 glm::vec4 start = this->primaryEyeActive ? this->primaryEye : this->secondaryEye;
                 glm::vec4 pixelCoord = glm::vec4(0.0, -((float)x-401.0f+0.5f) * PIXEL_SIZE, -((float)y-401.0f+0.5f) * PIXEL_SIZE, 1.0);
-                auto ray = std::make_shared<Ray>(Ray{ start, glm::normalize((pixelCoord-start).xyz()), 1.0/samplesPerPixel });
+                Ray ray = Ray{ start, (pixelCoord-start).xyz(), 1.0/samplesPerPixel };
 
                 // // 5. Find the intersecting triangle or object in the scene and add to ray tree
                 // scene.rayIntersection(ray);
 
                 // // 6. More rays based on the inital ray's target object, add to ray tree and refer to index of parent/children
-                // if (ray->target->reflectiveness > 0.0) {
-                //     Ray reflected = ray->target->perfectReflection(ray);
+                // if (ray.target->reflectiveness > 0.0) {
+                //     Ray reflected = ray.target->perfectReflection(ray);
                 // }
 
                 // // 7. Traverse ray tree backwards and calculate final ray's color value
@@ -174,7 +174,7 @@ void Camera::render(const Scene& scene)
                 // Color localLight = scene.localLighting(ray);
 
                 // Add ray to image pixel (TODO: Remove local light contribution here 🤷‍♀️)
-                pixel.color += scene.traceRay(ray) * ray->importance;
+                pixel.color += scene.traceRay(ray) * ray.importance;
             }
             maxIntensity = glm::max(maxIntensity, pixel.color.r);
             maxIntensity = glm::max(maxIntensity, pixel.color.g);

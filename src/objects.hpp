@@ -13,7 +13,7 @@ struct SceneObject {
     float absorption;
     SurfaceType surface;
 
-    virtual float rayIntersection(std::shared_ptr<Ray> ray) = 0;
+    virtual float rayIntersection(const Ray& ray) = 0;
     virtual glm::vec3 calculateNormal(glm::vec4 p) = 0;
 
     Ray perfectReflection(Ray incoming);
@@ -31,7 +31,7 @@ struct Triangle : SceneObject {
         this->normal = glm::normalize(glm::cross((v2.xyz()-v1.xyz()), (v3.xyz()-v1.xyz())));
     } 
 
-    float rayIntersection(std::shared_ptr<Ray> ray);
+    float rayIntersection(const Ray& ray);
     glm::vec3 calculateNormal(glm::vec4 p);
 };
 
@@ -46,7 +46,7 @@ struct Sphere : SceneObject {
             this->surface = _surface;
         }
 
-    float rayIntersection(std::shared_ptr<Ray> ray);
+    float rayIntersection(const Ray& ray);
     glm::vec3 calculateNormal(glm::vec4 p);
     
     // Sphere ekv. 
