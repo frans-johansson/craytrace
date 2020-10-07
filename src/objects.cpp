@@ -2,11 +2,49 @@
 
 // SCENE OBJECT
 
-Ray SceneObject::perfectReflection(Ray incoming) {
+Ray SceneObject::perfectReflection(const Ray& incoming) {
     return Ray{
         incoming.end,
         glm::reflect(incoming.direction, this->calculateNormal(incoming.end)),
         incoming.importance
+    };
+}
+
+Ray SceneObject::diffuseReflection(const Ray& incoming) {
+    // Local coordinate system
+    using namespace glm;
+    vec3 Z = this->calculateNormal(incoming.end);
+    vec3 X = normalize(incoming.direction - dot(incoming.direction, Z) * Z);
+    vec3 Y = cross(-X, Z);
+    // Transformation matrix for local coordinates
+    // float trans[] = {
+    //     1.0f, 0.0f, 0.0f, -incoming.end.x,
+    //     0.0f, 1.0f, 0.0f, -incoming.end.y,
+    //     0.0f, 0.0f, 1.0f, -incoming.end.z,
+    //     0.0f, 0.0f, 0.0f, 1.0f,
+    // };
+    float rot[] = {
+        X.x,  X.y,  X.z,  0.0f,
+        Y.x,  Y.y,  Y.z,  0.0f,
+        Z.x,  Z.y,  Z.z,  0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f,
+    };
+    mat4 M = make_mat4(rot); 
+    // Monte carlo method to randomly select ray direction in local hemispherical coordinates
+    float phi = 2 * M_PI * rand() / RAND_MAX;
+    float theta = asin(sqrt(((float) rand()) / RAND_MAX));
+    // Cartesian local coordinates for the direction
+    float x = cos(phi) * sin(theta);
+    float y = sin(phi) * sin(theta);
+    float z = cos(theta);
+    vec4 localDir = vec4(x, y, z, 0.0f);
+    // Transform direction to world coordinates
+    vec3 worldDir = inverse(M) * localDir * M;
+
+    return Ray {
+        incoming.end,
+        worldDir,
+        incoming.importance * 0.8 // HACK: This value should not be hard coded like this
     };
 }
 

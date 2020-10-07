@@ -5,33 +5,66 @@
 Color Scene::traceRay(Ray& ray) const {
     auto target = this->rayIntersection(ray);
 
-    // TODO: Material properties to determine how much local light contributes to the ray color 🐱‍👤
-    ray.color = this->localLighting(ray) * target->color;
-    
-    if (ray.importance < 0.1) {
-        return ray.color;
-    }
-
-    if (target->surface == SurfaceType::TRANSPARENT)
+    switch (target->surface)
     {
-        // TODO: Unimplemented
-        // // Calculate reflection and refraction coefficients
-        
-        // // Handle refraction
-        // // auto refracted = target->perfectRefraction(ray);
-
-        // // Handle reflection
-        // auto reflected = std::make_shared<Ray>(target->perfectReflection(ray));
-        // ray.color = this->traceRay(reflected); // Add local lightning
-    } 
-    else if (target->surface == SurfaceType::MIRROR)
+    case SurfaceType::LAMBERTIAN:
+    {
+        // Local lighting
+        ray.color = target->color * this->localLighting(ray);
+        // Russian roulette scheme to determine if the ray is reflected or killed
+        float absorb = ((float) rand()) / RAND_MAX;
+        if (absorb < target->absorption) {
+            Ray reflected = target->diffuseReflection(ray);
+            ray.color += this->traceRay(reflected) * reflected.importance;
+            ray.color /= target->absorption;
+        }
+        break;
+    }
+    case SurfaceType::OREN_NAYAR:
+    {
+        /* TODO: Unimplemented */
+        break;
+    }
+    case SurfaceType::TRANSPARENT:
+    {
+        /* TODO: Unimplemented */
+        /* Note no break, should continue to MIRROR */ 
+    }
+    case SurfaceType::MIRROR:
     {
         Ray reflected = target->perfectReflection(ray);
-        reflected.importance *= 0.8;
-
-        // TODO: Material properties to determine how much local light contributes to the ray color 🐱‍👤
-        ray.color += this->traceRay(reflected) * reflected.importance;
+        ray.color = this->traceRay(reflected) * reflected.importance + this->localLighting(ray);
+        break;
     }
+    default:
+        break;
+    }
+
+    // ray.color = this->localLighting(ray) * target->color;
+    
+    // if (ray.importance < 0.1) {
+    //     return ray.color;
+    // }   
+
+    // if (target->surface == SurfaceType::TRANSPARENT)
+    // {
+    //     // TODO: Unimplemented
+    //     // // Calculate reflection and refraction coefficients
+        
+    //     // // Handle refraction
+    //     // // auto refracted = target->perfectRefraction(ray);
+
+    //     // // Handle reflection
+    //     // auto reflected = std::make_shared<Ray>(target->perfectReflection(ray));
+    //     // ray.color = this->traceRay(reflected); // Add local lightning
+    // } 
+    // else if (target->surface == SurfaceType::MIRROR)
+    // {
+    //     Ray reflected = target->perfectReflection(ray);
+    //     reflected.importance *= 0.8;
+
+    //     ray.color += this->traceRay(reflected) * reflected.importance;
+    // }
 
     return ray.color;
 }
@@ -144,38 +177,27 @@ Pixel& Camera::getImagePixel(size_t x, size_t y) {
 
 void Camera::render(const Scene& scene)
 {
-    // 1. Define ray tree as vector
-    // 2. Iterate over all pixels in the image
     for (size_t y = 0; y < IMAGE_SIZE; ++y)
     {
         for (size_t x = 0; x < IMAGE_SIZE; ++x)
         {
-            // Get a reference to the current pixel
             Pixel& pixel = getImagePixel(x, y); 
 
-            // 3. Iterate over all subsamples of the pixel
             for (int i = 0; i < this->samplesPerPixel; ++i) {
-                // 4. Spawn a new ray going through the pixel from the camera
+                // Subpixel coordinates
+                float xi = ((float)x-401.0f) * PIXEL_SIZE + (i % 3) * this->subpixelSize;
+                float yi = ((float)y-401.0f) * PIXEL_SIZE + glm::floor(i/3) * this->subpixelSize;
+                // Random offsets into the subpixel
+                float dx = this->subpixelSize * ((float) rand()) / RAND_MAX;
+                float dy = this->subpixelSize * ((float) rand()) / RAND_MAX;
+                // Spawn a new ray from the active eye point going through the subpixel coordinate
+                glm::vec4 pixelCoord = glm::vec4(0.0, -(xi + dx), -(yi + dy) , 1.0);
                 glm::vec4 start = this->primaryEyeActive ? this->primaryEye : this->secondaryEye;
-                glm::vec4 pixelCoord = glm::vec4(0.0, -((float)x-401.0f+0.5f) * PIXEL_SIZE, -((float)y-401.0f+0.5f) * PIXEL_SIZE, 1.0);
                 Ray ray = Ray{ start, (pixelCoord-start).xyz(), 1.0/samplesPerPixel };
 
-                // // 5. Find the intersecting triangle or object in the scene and add to ray tree
-                // scene.rayIntersection(ray);
-
-                // // 6. More rays based on the inital ray's target object, add to ray tree and refer to index of parent/children
-                // if (ray.target->reflectiveness > 0.0) {
-                //     Ray reflected = ray.target->perfectReflection(ray);
-                // }
-
-                // // 7. Traverse ray tree backwards and calculate final ray's color value
-                // // Calculate local lighting (done for each step of 7)
-                // // TODO: Shadow rays when calculating local light 💡
-                // Color localLight = scene.localLighting(ray);
-
-                // Add ray to image pixel (TODO: Remove local light contribution here 🤷‍♀️)
                 pixel.color += scene.traceRay(ray) * ray.importance;
             }
+
             maxIntensity = glm::max(maxIntensity, pixel.color.r);
             maxIntensity = glm::max(maxIntensity, pixel.color.g);
             maxIntensity = glm::max(maxIntensity, pixel.color.b);

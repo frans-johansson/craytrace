@@ -8,6 +8,7 @@
 #include <array>
 #include <memory>
 #include <limits>
+#include <math.h>
 // External libraries
 #include <glm/glm.hpp>
 #include <png++/png.hpp>

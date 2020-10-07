@@ -58,13 +58,14 @@ class Camera {
 private:
     glm::vec4 primaryEye, secondaryEye;
     int samplesPerPixel;
+    float subpixelSize;
     bool primaryEyeActive;
     std::array<Pixel, IMAGE_SIZE*IMAGE_SIZE>* image;
     double maxIntensity;
 
 public:
     Camera(glm::vec4 _primaryEye, glm::vec4 _secondaryEye, int _samplesPerPixel)
-    : primaryEye{_primaryEye}, secondaryEye{_secondaryEye}, samplesPerPixel{_samplesPerPixel}, primaryEyeActive{true}, maxIntensity{0.0} {
+    : primaryEye{_primaryEye}, secondaryEye{_secondaryEye}, samplesPerPixel{_samplesPerPixel}, subpixelSize{PIXEL_SIZE / (float)glm::sqrt(_samplesPerPixel)}, primaryEyeActive{true}, maxIntensity{0.0} {
         image = new std::array<Pixel, IMAGE_SIZE*IMAGE_SIZE>();
         image->fill(Pixel{ BLACK });
     }
