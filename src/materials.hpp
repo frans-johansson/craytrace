@@ -37,7 +37,6 @@ struct DiffuseLambertian : Material {
     : Material(_color), rho{_rho} {}
 
     double sampleBRDF(const Ray& ray, const Ray& exitant);
-    Color sampleColor(const Ray& ray, const Ray& exitant);
 };
 
 struct DiffuseOrenNayar : Material {
@@ -48,7 +47,6 @@ struct DiffuseOrenNayar : Material {
     : Material(_color), rho{_rho}, sig{_sig} {}
 
     double sampleBRDF(const Ray& ray, const Ray& exitant);
-    Color sampleColor(const Ray& ray, const Ray& exitant);
 };
 
 struct PerfectReflector : Material {
@@ -83,8 +81,6 @@ struct LambertianEmitter : Material {
     std::vector<Ray> nextRayBranch(const Ray& incoming) {
         return {};
     }
-
-    Color sampleColor(const Ray& incoming, const Ray& exitant);
 };
 
 struct MaterialFactory {

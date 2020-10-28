@@ -12,35 +12,35 @@ int main() {
     // * Each wall should be a unique color
     std::vector<std::shared_ptr<Triangle>> walls = {    
         // Ceiling
-        std::make_shared<Triangle>(Triangle{ vec4(-3.0, 0.0, 5.0, 1.0), vec4( 0.0, 6.0, 5.0, 1.0), vec4( 5.0, 0.0, 5.0, 1.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.5) }),
-        std::make_shared<Triangle>(Triangle{ vec4( 0.0, 6.0, 5.0, 1.0), vec4(10.0, 6.0, 5.0, 1.0), vec4( 5.0, 0.0, 5.0, 1.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.5) }),
-        std::make_shared<Triangle>(Triangle{ vec4(10.0, 6.0, 5.0, 1.0), vec4(13.0, 0.0, 5.0, 1.0), vec4( 5.0, 0.0, 5.0, 1.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.5) }),
-        std::make_shared<Triangle>(Triangle{ vec4(13.0, 0.0, 5.0, 1.0), vec4(10.0,-6.0, 5.0, 1.0), vec4( 5.0, 0.0, 5.0, 1.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.5) }),
-        std::make_shared<Triangle>(Triangle{ vec4(10.0,-6.0, 5.0, 1.0), vec4( 0.0,-6.0, 5.0, 1.0), vec4( 5.0, 0.0, 5.0, 1.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.5) }),
-        std::make_shared<Triangle>(Triangle{ vec4( 0.0,-6.0, 5.0, 1.0), vec4(-3.0, 0.0, 5.0, 1.0), vec4( 5.0, 0.0, 5.0, 1.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.5) }),
+        std::make_shared<Triangle>(Triangle{ vec3(-3.0, 0.0, 5.0), vec3( 0.0, 6.0, 5.0), vec3( 5.0, 0.0, 5.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.4) }),
+        std::make_shared<Triangle>(Triangle{ vec3( 0.0, 6.0, 5.0), vec3(10.0, 6.0, 5.0), vec3( 5.0, 0.0, 5.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.4) }),
+        std::make_shared<Triangle>(Triangle{ vec3(10.0, 6.0, 5.0), vec3(13.0, 0.0, 5.0), vec3( 5.0, 0.0, 5.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.4) }),
+        std::make_shared<Triangle>(Triangle{ vec3(13.0, 0.0, 5.0), vec3(10.0,-6.0, 5.0), vec3( 5.0, 0.0, 5.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.4) }),
+        std::make_shared<Triangle>(Triangle{ vec3(10.0,-6.0, 5.0), vec3( 0.0,-6.0, 5.0), vec3( 5.0, 0.0, 5.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.4) }),
+        std::make_shared<Triangle>(Triangle{ vec3( 0.0,-6.0, 5.0), vec3(-3.0, 0.0, 5.0), vec3( 5.0, 0.0, 5.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.4) }),
         // Floor
-        std::make_shared<Triangle>(Triangle{ vec4(-3.0, 0.0,-5.0, 1.0), vec4( 5.0, 0.0,-5.0, 1.0), vec4( 0.0, 6.0,-5.0, 1.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.5) }),
-        std::make_shared<Triangle>(Triangle{ vec4( 0.0, 6.0,-5.0, 1.0), vec4( 5.0, 0.0,-5.0, 1.0), vec4(10.0, 6.0,-5.0, 1.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.5) }),
-        std::make_shared<Triangle>(Triangle{ vec4(10.0, 6.0,-5.0, 1.0), vec4( 5.0, 0.0,-5.0, 1.0), vec4(13.0, 0.0,-5.0, 1.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.5) }),
-        std::make_shared<Triangle>(Triangle{ vec4(13.0, 0.0,-5.0, 1.0), vec4( 5.0, 0.0,-5.0, 1.0), vec4(10.0,-6.0,-5.0, 1.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.5) }),
-        std::make_shared<Triangle>(Triangle{ vec4(10.0,-6.0,-5.0, 1.0), vec4( 5.0, 0.0,-5.0, 1.0), vec4( 0.0,-6.0,-5.0, 1.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.5) }),
-        std::make_shared<Triangle>(Triangle{ vec4( 0.0,-6.0,-5.0, 1.0), vec4( 5.0, 0.0,-5.0, 1.0), vec4(-3.0, 0.0,-5.0, 1.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.5) }),
+        std::make_shared<Triangle>(Triangle{ vec3(-3.0, 0.0,-5.0), vec3( 5.0, 0.0,-5.0), vec3( 0.0, 6.0,-5.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.4) }),
+        std::make_shared<Triangle>(Triangle{ vec3( 0.0, 6.0,-5.0), vec3( 5.0, 0.0,-5.0), vec3(10.0, 6.0,-5.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.4) }),
+        std::make_shared<Triangle>(Triangle{ vec3(10.0, 6.0,-5.0), vec3( 5.0, 0.0,-5.0), vec3(13.0, 0.0,-5.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.4) }),
+        std::make_shared<Triangle>(Triangle{ vec3(13.0, 0.0,-5.0), vec3( 5.0, 0.0,-5.0), vec3(10.0,-6.0,-5.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.4) }),
+        std::make_shared<Triangle>(Triangle{ vec3(10.0,-6.0,-5.0), vec3( 5.0, 0.0,-5.0), vec3( 0.0,-6.0,-5.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.4) }),
+        std::make_shared<Triangle>(Triangle{ vec3( 0.0,-6.0,-5.0), vec3( 5.0, 0.0,-5.0), vec3(-3.0, 0.0,-5.0), MaterialFactory::makeDiffuseLambertian(WHITE, 0.4) }),
         // Left wall
-        std::make_shared<Triangle>(Triangle{ vec4( 0.0, 6.0, 5.0, 1.0), vec4( 0.0, 6.0,-5.0, 1.0), vec4(10.0, 6.0,-5.0, 1.0), MaterialFactory::makeDiffuseLambertian(RED, 0.9) }), // RED
-        std::make_shared<Triangle>(Triangle{ vec4( 0.0, 6.0, 5.0, 1.0), vec4(10.0, 6.0,-5.0, 1.0), vec4(10.0, 6.0, 5.0, 1.0), MaterialFactory::makeDiffuseLambertian(RED, 0.9) }),
+        std::make_shared<Triangle>(Triangle{ vec3( 0.0, 6.0, 5.0), vec3( 0.0, 6.0,-5.0), vec3(10.0, 6.0,-5.0), MaterialFactory::makeDiffuseLambertian(RED, 0.9) }), // RED
+        std::make_shared<Triangle>(Triangle{ vec3( 0.0, 6.0, 5.0), vec3(10.0, 6.0,-5.0), vec3(10.0, 6.0, 5.0), MaterialFactory::makeDiffuseLambertian(RED, 0.9) }),
         // Right wall
-        std::make_shared<Triangle>(Triangle{ vec4( 0.0,-6.0,-5.0, 1.0), vec4( 0.0,-6.0, 5.0, 1.0), vec4(10.0,-6.0,-5.0, 1.0), MaterialFactory::makeDiffuseLambertian(MAGENTA, 0.9) }), 
-        std::make_shared<Triangle>(Triangle{ vec4( 0.0,-6.0, 5.0, 1.0), vec4(10.0,-6.0, 5.0, 1.0), vec4(10.0,-6.0,-5.0, 1.0), MaterialFactory::makeDiffuseLambertian(MAGENTA, 0.9) }),
+        std::make_shared<Triangle>(Triangle{ vec3( 0.0,-6.0,-5.0), vec3( 0.0,-6.0, 5.0), vec3(10.0,-6.0,-5.0), MaterialFactory::makeDiffuseLambertian(MAGENTA, 0.9) }), 
+        std::make_shared<Triangle>(Triangle{ vec3( 0.0,-6.0, 5.0), vec3(10.0,-6.0, 5.0), vec3(10.0,-6.0,-5.0), MaterialFactory::makeDiffuseLambertian(MAGENTA, 0.9) }),
         // Front walls
-        std::make_shared<Triangle>(Triangle{ vec4(10.0,-6.0, 5.0, 1.0), vec4(13.0, 0.0, 5.0, 1.0), vec4(10.0,-6.0,-5.0, 1.0), MaterialFactory::makeDiffuseLambertian(BLUE, 0.9) }), // BLUE
-        std::make_shared<Triangle>(Triangle{ vec4(13.0, 0.0, 5.0, 1.0), vec4(13.0, 0.0,-5.0, 1.0), vec4(10.0,-6.0,-5.0, 1.0), MaterialFactory::makeDiffuseLambertian(BLUE, 0.9) }),
-        std::make_shared<Triangle>(Triangle{ vec4(10.0, 6.0, 5.0, 1.0), vec4(13.0, 0.0,-5.0, 1.0), vec4(13.0, 0.0, 5.0, 1.0), MaterialFactory::makeDiffuseLambertian(CYAN, 0.9) }), // CYAN
-        std::make_shared<Triangle>(Triangle{ vec4(10.0, 6.0, 5.0, 1.0), vec4(10.0, 6.0,-5.0, 1.0), vec4(13.0, 0.0,-5.0, 1.0), MaterialFactory::makeDiffuseLambertian(CYAN, 0.9) }),
+        std::make_shared<Triangle>(Triangle{ vec3(10.0,-6.0, 5.0), vec3(13.0, 0.0, 5.0), vec3(10.0,-6.0,-5.0), MaterialFactory::makeDiffuseLambertian(BLUE, 0.9) }), // BLUE
+        std::make_shared<Triangle>(Triangle{ vec3(13.0, 0.0, 5.0), vec3(13.0, 0.0,-5.0), vec3(10.0,-6.0,-5.0), MaterialFactory::makeDiffuseLambertian(BLUE, 0.9) }),
+        std::make_shared<Triangle>(Triangle{ vec3(10.0, 6.0, 5.0), vec3(13.0, 0.0,-5.0), vec3(13.0, 0.0, 5.0), MaterialFactory::makeDiffuseLambertian(CYAN, 0.9) }), // CYAN
+        std::make_shared<Triangle>(Triangle{ vec3(10.0, 6.0, 5.0), vec3(10.0, 6.0,-5.0), vec3(13.0, 0.0,-5.0), MaterialFactory::makeDiffuseLambertian(CYAN, 0.9) }),
         // Back walls
-        std::make_shared<Triangle>(Triangle{ vec4( 0.0, 6.0, 5.0, 1.0), vec4(-3.0, 0.0,-5.0, 1.0), vec4( 0.0, 6.0,-5.0, 1.0), MaterialFactory::makeDiffuseLambertian(ORANGE, 0.9) }), // ORANGE
-        std::make_shared<Triangle>(Triangle{ vec4( 0.0, 6.0, 5.0, 1.0), vec4(-3.0, 0.0, 5.0, 1.0), vec4(-3.0, 0.0,-5.0, 1.0), MaterialFactory::makeDiffuseLambertian(ORANGE, 0.9) }),
-        std::make_shared<Triangle>(Triangle{ vec4(-3.0, 0.0, 5.0, 1.0), vec4( 0.0,-6.0,-5.0, 1.0), vec4(-3.0, 0.0,-5.0, 1.0), MaterialFactory::makeDiffuseLambertian(YELLOW, 0.9) }), // YELLOW
-        std::make_shared<Triangle>(Triangle{ vec4(-3.0, 0.0, 5.0, 1.0), vec4( 0.0,-6.0, 5.0, 1.0), vec4( 0.0,-6.0,-5.0, 1.0), MaterialFactory::makeDiffuseLambertian(YELLOW, 0.9) })
+        std::make_shared<Triangle>(Triangle{ vec3( 0.0, 6.0, 5.0), vec3(-3.0, 0.0,-5.0), vec3( 0.0, 6.0,-5.0), MaterialFactory::makeDiffuseLambertian(ORANGE, 0.9) }), // ORANGE
+        std::make_shared<Triangle>(Triangle{ vec3( 0.0, 6.0, 5.0), vec3(-3.0, 0.0, 5.0), vec3(-3.0, 0.0,-5.0), MaterialFactory::makeDiffuseLambertian(ORANGE, 0.9) }),
+        std::make_shared<Triangle>(Triangle{ vec3(-3.0, 0.0, 5.0), vec3( 0.0,-6.0,-5.0), vec3(-3.0, 0.0,-5.0), MaterialFactory::makeDiffuseLambertian(YELLOW, 0.9) }), // YELLOW
+        std::make_shared<Triangle>(Triangle{ vec3(-3.0, 0.0, 5.0), vec3( 0.0,-6.0, 5.0), vec3( 0.0,-6.0,-5.0), MaterialFactory::makeDiffuseLambertian(YELLOW, 0.9) })
     };
 
     std::cout << "Running CRaytrace...\n";
@@ -49,48 +49,48 @@ int main() {
     Scene scene = Scene{ std::move(walls) };
     
     // Add scene objects (Tetrahedron -Moa 🐟)
-    // scene.addTetrahedron(1.0, 1.0, vec4(7.5, 1.0,  1.0, 1.0), Color{ 1.0, 0.5, 0.0 });
-    // scene.addTetrahedron(1.5, 1.5, vec4(7.5, 1.0, -0.5, 1.0), Color{ 1.0, 0.0, 0.5 }, SurfaceType::MIRROR);
-    // scene.addTetrahedron(1.0, 2.5, vec4(4.0, -2.3, -4.5, 1.0), std::move(MaterialFactory::makeDiffuseOrenNayar(GREEN)));
-    // scene.addTetrahedron(0.8, 2.0, vec4(3.5,  0.3, -5.0, 1.0), YELLOW);
-    // scene.addTetrahedron(0.3, 2.0, vec4(7.0, -3.5, -1.0, 1.0), Color{ 0.2, 0.8, 1.0 });
+    // scene.addTetrahedron(1.0, 1.0, vec3(7.5, 1.0,  1.0, 1.0), Color{ 1.0, 0.5, 0.0 });
+    // scene.addTetrahedron(1.5, 1.5, vec3(7.5, 1.0, -0.5, 1.0), Color{ 1.0, 0.0, 0.5 }, SurfaceType::MIRROR);
+    // scene.addTetrahedron(1.0, 2.5, vec3(4.0, -2.3, -4.5), std::move(MaterialFactory::makeDiffuseOrenNayar(GREEN)));
+    // scene.addTetrahedron(0.8, 2.0, vec3(3.5,  0.3, -5.0, 1.0), YELLOW);
+    // scene.addTetrahedron(0.3, 2.0, vec3(7.0, -3.5, -1.0, 1.0), Color{ 0.2, 0.8, 1.0 });
 
-    scene.addBox(1.0, 1.0, 1.0, vec4(4.0, 0.0, 0.0, 1.0), std::move(MaterialFactory::makeDiffuseLambertian(GREEN)));
+    // scene.addBox(4.0, 0.8, 4.0, vec3(4.0, -2.3, -4.5), std::move(MaterialFactory::makeDiffuseLambertian(GREEN)));
 
     // Add schene objects (Sphere ⚽)
-    // scene.addSphere(3.0, vec4(5.4,  2.8, -2.5, 1.0), std::move(MaterialFactory::makeDiffuseLambertian(WHITE)));
-    // scene.addSphere(1.5, vec4(7.5, -3.5, -2.8, 1.0), std::move(MaterialFactory::makePerfectReflector()));
-    // scene.addSphere(2.5, vec4(8.2, 0.0, -1.0, 1.0), std::move(MaterialFactory::makeDiffuseOrenNayar(YELLOW)));
+    scene.addSphere(3.0, vec3(4.4, 2.8, -2.5), std::move(MaterialFactory::makeDiffuseLambertian(WHITE)));
+    scene.addSphere(1.5, vec3(7.5, -3.5, -2.8), std::move(MaterialFactory::makePerfectReflector()));
+    scene.addSphere(2.5, vec3(8.2, 0.0, -1.0), std::move(MaterialFactory::makeDiffuseOrenNayar(YELLOW)));
 
     // Add point lights for local lighting
-    // scene.addPointLight({ glm::vec4(5.0, 0.0, 4.5, 1.0), 1.0, WHITE });
-    // scene.addPointLight({ glm::vec4(2.0, 4.0,-4.0, 1.0), 0.8, WHITE });
-    // scene.addPointLight({ glm::vec4(2.0,-4.0,-4.0, 1.0), 0.8, WHITE });
-    // scene.addPointLight({ glm::vec4(2.0, 4.0,-4.0, 1.0), 0.8, Color{ 1.0, 0.3, 0.3 } });
-    // scene.addPointLight({ glm::vec4(2.0,-4.0,-4.0, 1.0), 0.5, Color{ 0.3, 0.3, 1.0 } });
+    // scene.addPointLight({ glm::vec3(5.0, 0.0, 4.5, 1.0), 1.0, WHITE });
+    // scene.addPointLight({ glm::vec3(2.0, 4.0,-4.0, 1.0), 0.8, WHITE });
+    // scene.addPointLight({ glm::vec3(2.0,-4.0,-4.0, 1.0), 0.8, WHITE });
+    // scene.addPointLight({ glm::vec3(2.0, 4.0,-4.0, 1.0), 0.8, Color{ 1.0, 0.3, 0.3 } });
+    // scene.addPointLight({ glm::vec3(2.0,-4.0,-4.0, 1.0), 0.5, Color{ 0.3, 0.3, 1.0 } });
 
     // Add area lights
     auto l1 = std::make_shared<Triangle>(Triangle{ 
-        vec4(5.5, 0.5, 4.99, 1.0),
-        vec4(4.5,-0.5, 4.99, 1.0),
-        vec4(4.5, 0.5, 4.99, 1.0),
-        MaterialFactory::makeLambertianEmitter(WHITE, 1.0) 
+        vec3(5.5, 0.5, 4.999),
+        vec3(4.5,-0.5, 4.999),
+        vec3(4.5, 0.5, 4.999),
+        MaterialFactory::makeLambertianEmitter(WHITE, 1.0 * M_PI) 
     });
     auto l2 = std::make_shared<Triangle>(Triangle{ 
-        vec4(5.5, 0.5, 4.99, 1.0),
-        vec4(5.5,-0.5, 4.99, 1.0),
-        vec4(4.5,-0.5, 4.99, 1.0),
-        MaterialFactory::makeLambertianEmitter(WHITE, 1.0) 
+        vec3(5.5, 0.5, 4.999),
+        vec3(5.5,-0.5, 4.999),
+        vec3(4.5,-0.5, 4.999),
+        MaterialFactory::makeLambertianEmitter(WHITE, 1.0 * M_PI)
     });
     scene.addAreaLight(l1);
     scene.addAreaLight(l2);
-    // scene.addAreaLight(Triangle{ vec4(5.5, 5.0, 4.5, 1.0), vec4(4.5, 4.0, 4.5, 1.0), vec4(4.5, 5.0, 4.5, 1.0), WHITE }, 1.0f);
-    // scene.addAreaLight(Triangle{ vec4(5.5, 5.0, 4.5, 1.0), vec4(5.5, 4.0, 4.5, 1.0), vec4(4.5, 4.0, 4.5, 1.0), WHITE }, 1.0f);
-    // scene.addAreaLight(Triangle{ vec4(5.5,-5.0, 4.5, 1.0), vec4(4.5,-5.0, 4.5, 1.0), vec4(4.5,-4.0, 4.5, 1.0), WHITE }, 1.0f);
-    // scene.addAreaLight(Triangle{ vec4(5.5,-5.0, 4.5, 1.0), vec4(4.5,-4.0, 4.5, 1.0), vec4(5.5,-4.0, 4.5, 1.0), WHITE }, 1.0f);
+    // scene.addAreaLight(Triangle{ vec3(5.5, 5.0, 4.5, 1.0), vec3(4.5, 4.0, 4.5, 1.0), vec3(4.5, 5.0, 4.5, 1.0), WHITE }, 1.0f);
+    // scene.addAreaLight(Triangle{ vec3(5.5, 5.0, 4.5, 1.0), vec3(5.5, 4.0, 4.5, 1.0), vec3(4.5, 4.0, 4.5, 1.0), WHITE }, 1.0f);
+    // scene.addAreaLight(Triangle{ vec3(5.5,-5.0, 4.5, 1.0), vec3(4.5,-5.0, 4.5, 1.0), vec3(4.5,-4.0, 4.5, 1.0), WHITE }, 1.0f);
+    // scene.addAreaLight(Triangle{ vec3(5.5,-5.0, 4.5, 1.0), vec3(4.5,-4.0, 4.5, 1.0), vec3(5.5,-4.0, 4.5, 1.0), WHITE }, 1.0f);
 
     // Create the camera
-    Camera camera = Camera{ glm::vec4(-2.0, 0.0, 0.0, 1.0), glm::vec4(-1.0, 0.0, 0.0, 1.0), PIXEL_SAMPLES };
+    Camera camera = Camera{ glm::vec3(-2.0, 0.0, 0.0), glm::vec3(-1.0, 0.0, 0.0), PIXEL_SAMPLES };
 
     camera.toggleActiveEye();
 

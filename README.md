@@ -8,6 +8,8 @@ Implementation of a Monte-Carlo raytracer in C++. This project was done for the 
 - Cosine term from rendering equation as `lightAmount` cause shadow-acne for some reason
 
 ## TODO:
+- [ ] Ignore rays that end on light sources, use penultimate ray as final ray.
+- [ ] Figure out why rays seem to get trapped inside of boxes and tetrahedra.
 - [ ] Refactor code base
   - [x] Separate code into more files
   - [x] Collect forward-declarations in one header file, which is included first

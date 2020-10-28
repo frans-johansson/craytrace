@@ -72,13 +72,12 @@ Ray Material::diffuseReflection(const Ray& incoming) {
     float x = cos(phi) * sin(theta);
     float y = sin(phi) * sin(theta);
     float z = cos(theta);
-    vec4 localDir = vec4(x, y, z, 0.0f);
+    vec3 localDir = vec3(x, y, z);
     // Transform direction to world coordinates
     vec3 worldDir = inverse(M) * localDir;
-    // Length of original ray used to calculate importance drop off
-    // float dropoff = sqrt(length(incoming.end - incoming.start));
     // Offset starting point with some bias to avoid self-intersections
-    vec4 offsetStart = incoming.end + vec4(Z * SHADOW_BIAS, 1.0);
+    vec3 offsetStart = incoming.offsetEndPoint();
+    // vec3 offsetStart = incoming.end;
 
     Ray exitant = Ray{ offsetStart, worldDir, incoming.importance };
     exitant.importance *= M_PI * this->sampleBRDF(incoming, exitant) / this->absorption;
@@ -98,11 +97,6 @@ double DiffuseLambertian::sampleBRDF(const Ray& incoming, const Ray& exitant) {
     return this->rho / M_PI;
 }
 
-Color DiffuseLambertian::sampleColor(const Ray& incoming, const Ray& exitant) {
-    // return this->color * this->sampleBRDF(incoming, exitant);
-    return this->color;
-}
-
 // DIFFUSE OREN-NAYAR
 
 double DiffuseOrenNayar::sampleBRDF(const Ray& incoming, const Ray& exitant) {
@@ -119,11 +113,6 @@ double DiffuseOrenNayar::sampleBRDF(const Ray& incoming, const Ray& exitant) {
     double beta = glm::min(theta_in, theta_out);
 
     return this->rho * (A + B * glm::max(0.0f, cos(phi_in - phi_out)) * sin(alpha) * sin(beta)) / M_PI;
-}
-
-Color DiffuseOrenNayar::sampleColor(const Ray& incoming, const Ray& exitant) {
-    // Color result = this->color * this->sampleBRDF(incoming, exitant);
-    return this->color;
 }
 
 // PERFECT REFLECTOR
@@ -174,11 +163,4 @@ std::vector<Ray> PerfectRefractor::nextRayBranch(const Ray& incoming) {
     }
 
     return result;
-}
-
-// LAMBERTIAN EMITTER
-
-Color LambertianEmitter::sampleColor(const Ray& incoming, const Ray& exitant) {
-    // return this->emittance * this->color;
-    return this->color;
 }

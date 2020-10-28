@@ -36,10 +36,9 @@
 
 // SCENE
 
-Color Scene::traceRay(Ray& ray) const {
+Color Scene::traceRay(Ray& ray, int depth) const {
     auto target = this->rayIntersection(ray);
     double rollingAvg = 1.0;
-    // double cosTerm = glm::dot(-ray.direction, target->calculateNormal(ray.end));
 
     Color localColor;
     // Color localLightingColor = WHITE;
@@ -53,7 +52,8 @@ Color Scene::traceRay(Ray& ray) const {
 
     // Is target an emittor?
     if (target->material->emittance > 0.0) {
-        localLightingRadiance = target->material->emittance;
+        // localLightingRadiance = target->material->emittance;
+        localLightingRadiance = depth == 0 ? 1.0 : 0.0;
     }
     else {
         Color localLighting = this->localLighting(ray);
@@ -72,7 +72,7 @@ Color Scene::traceRay(Ray& ray) const {
         
     // Handle branching rays
     for (auto branchingRay : branchingRays) {
-        incomingColor += this->traceRay(branchingRay);
+        incomingColor += this->traceRay(branchingRay, depth+1);
         incomingImportance += branchingRay.importance;
         incomingRadiance += branchingRay.radiance;
     }
@@ -89,10 +89,10 @@ Color Scene::traceRay(Ray& ray) const {
 std::shared_ptr<SceneObject> Scene::rayIntersection(Ray& ray) const {
     float nearest = FLT_MAX;
     ray.target = std::make_shared<Triangle>(Triangle{
-        glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
-        glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
-        glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
-        MaterialFactory::makeDiffuseLambertian(GREEN)
+        glm::vec3(-10.0f, -10.0f, -10.0f),
+        glm::vec3(-10.0f, -10.0f, -10.0f),
+        glm::vec3(-10.0f, -10.0f, -10.0f),
+        MaterialFactory::makeDiffuseLambertian(MAGENTA)
     });
 
     // TODO: Make this one single loop
@@ -102,7 +102,7 @@ std::shared_ptr<SceneObject> Scene::rayIntersection(Ray& ray) const {
         // if (glm::dot(triangle->calculateNormal(ray.end), ray.direction) > 0.0f)
         //     continue;
 
-        if (hit > EPSILON && hit < nearest) {
+        if (glm::sign(hit) > 0.0 && hit < nearest) {
             ray.target = triangle;
             ray.setEnd(hit);
             nearest = hit;
@@ -115,7 +115,7 @@ std::shared_ptr<SceneObject> Scene::rayIntersection(Ray& ray) const {
         // if (glm::dot(sphere->calculateNormal(ray.end), ray.direction) > 0.0f)
         //     continue;
 
-        if (hit > EPSILON && hit < nearest) {
+        if (glm::sign(hit) > 0.0 && hit < nearest) {
             ray.target = sphere;
             ray.setEnd(hit);
             nearest = hit;
@@ -125,7 +125,7 @@ std::shared_ptr<SceneObject> Scene::rayIntersection(Ray& ray) const {
     for (auto light : this->areaLights) {
         float hit = light->rayIntersection(ray);
 
-        if (hit > EPSILON && hit < nearest) {
+        if (glm::sign(hit) > 0.0 && hit < nearest) {
             ray.target = light;
             ray.setEnd(hit);
             nearest = hit;
@@ -135,13 +135,13 @@ std::shared_ptr<SceneObject> Scene::rayIntersection(Ray& ray) const {
     return ray.target;
 }
 
-void Scene::addTetrahedron(float width, float height, glm::vec4 m, std::unique_ptr<Material> material) {
+void Scene::addTetrahedron(float width, float height, glm::vec3 m, std::unique_ptr<Material> material) {
     using namespace glm;
     float offset = height/sqrt(2); 
-    vec4 a = m + vec4(0.0, 0.0, height, 0.0);
-    vec4 b = m + vec4(-width, 0.0, 0.0, 0.0);
-    vec4 c = m + vec4(offset, offset, 0.0, 0.0);
-    vec4 d = m + vec4(offset, -offset, 0.0, 0.0);
+    vec3 a = m + vec3(0.0, 0.0, height);
+    vec3 b = m + vec3(-width, 0.0, 0.0);
+    vec3 c = m + vec3(offset, offset, 0.0);
+    vec3 d = m + vec3(offset, -offset, 0.0);
 
     std::vector<std::shared_ptr<Triangle>> tris{
         std::make_shared<Triangle>(Triangle{ b, a, c, std::make_unique<Material>(*material) }),
@@ -153,17 +153,17 @@ void Scene::addTetrahedron(float width, float height, glm::vec4 m, std::unique_p
     this->triangles.insert(this->triangles.end(), tris.begin(), tris.end());
 }
 
-void Scene::addBox(float width, float height, float depth, glm::vec4 m, std::unique_ptr<Material> material) {
+void Scene::addBox(float width, float height, float depth, glm::vec3 m, std::unique_ptr<Material> material) {
     using namespace glm;   
     // Vertices
-    vec4 f1 = m + vec4(-depth/2.0,  width/2.0, 0.0,    0.0);
-    vec4 f2 = m + vec4(-depth/2.0,  width/2.0, height, 0.0);
-    vec4 f3 = m + vec4(-depth/2.0, -width/2.0, height, 0.0);
-    vec4 f4 = m + vec4(-depth/2.0, -width/2.0, 0.0,    0.0);
-    vec4 b1 = m + vec4( depth/2.0,  width/2.0, 0.0,    0.0);
-    vec4 b2 = m + vec4( depth/2.0,  width/2.0, height, 0.0);
-    vec4 b3 = m + vec4( depth/2.0, -width/2.0, height, 0.0);
-    vec4 b4 = m + vec4( depth/2.0, -width/2.0, 0.0,    0.0);
+    vec3 f1 = m + vec3(-depth/2.0,  width/2.0, 0.0);
+    vec3 f2 = m + vec3(-depth/2.0,  width/2.0, height);
+    vec3 f3 = m + vec3(-depth/2.0, -width/2.0, height);
+    vec3 f4 = m + vec3(-depth/2.0, -width/2.0, 0.0);
+    vec3 b1 = m + vec3( depth/2.0,  width/2.0, 0.0);
+    vec3 b2 = m + vec3( depth/2.0,  width/2.0, height);
+    vec3 b3 = m + vec3( depth/2.0, -width/2.0, height);
+    vec3 b4 = m + vec3( depth/2.0, -width/2.0, 0.0);
     
     std::vector<std::shared_ptr<Triangle>> tris;
     // Front
@@ -188,7 +188,7 @@ void Scene::addBox(float width, float height, float depth, glm::vec4 m, std::uni
     this->triangles.insert(this->triangles.end(), tris.begin(), tris.end());
 }
 
-void Scene::addSphere(float radius, glm::vec4 m, std::unique_ptr<Material> material)
+void Scene::addSphere(float radius, glm::vec3 m, std::unique_ptr<Material> material)
 {
     using namespace glm;
     this->spheres.push_back(std::make_shared<Sphere>(Sphere{m, radius, std::move(material)}));
@@ -215,11 +215,12 @@ Color Scene::localLighting(const Ray& ray) const {
     // Handle area lights
     for (auto light : this->areaLights) {
         Color thisLight = BLACK;
-        glm::vec4 offsetEnd = ray.end + glm::vec4(ray.target->calculateNormal(ray.end) * SHADOW_BIAS, 1.0);
+        // glm::vec3 offsetEnd = ray.offsetEndPoint();
+        glm::vec3 offsetEnd = ray.end + MAX_SHADOW_BIAS * ray.target->calculateNormal(ray.end);
         auto shadowRays = light->sampleShadowRays(offsetEnd);
 
         for (auto shadowRay : shadowRays) {
-            // Make sure we are not on the shaded side of an object
+            // Geometric term
             glm::vec3 targetNormal = ray.target->calculateNormal(ray.end);
             glm::vec3 lightNormal = light->calculateNormal(shadowRay.end);
             double alpha = glm::dot(targetNormal, shadowRay.direction);
@@ -229,8 +230,8 @@ Color Scene::localLighting(const Ray& ray) const {
             // Handle occlusion 
             shadowRay.target = light;
             if (!rayOccluded(shadowRay)) {
-                double dropoff = glm::pow(glm::length(glm::dvec3(shadowRay.end - shadowRay.start)), 2.0);
-                thisLight += cosTerm * light->material->sampleColor(shadowRay, shadowRay) / dropoff;
+                double dropoff = glm::pow(glm::length(shadowRay.end - shadowRay.start), 2.0);
+                thisLight += cosTerm * light->material->emittance * light->material->sampleColor(shadowRay, shadowRay) / dropoff;
             }
         }
         totalLight += thisLight / (double)shadowRays.size();
@@ -258,7 +259,21 @@ Color Ray::localLighting(const PointLight& light) const {
 }
 
 void Ray::setEnd(float t) {
-    this->end = glm::vec4(this->start.xyz + this->direction * t, 1.0);
+    this->end = this->start + this->direction * t;
+}
+
+glm::vec3 Ray::offsetEndPoint() const {
+    using namespace glm;
+    vec3 N = this->target->calculateNormal(this->end);
+    float dN = 1.0;
+    vec3 result = this->end + N * dN;
+    float offset = dot(result, N);
+    while (offset < 0 && offset > MAX_SHADOW_BIAS) {
+        offset = dot(result, N);
+        dN = -0.75 * glm::sign(offset);
+        result += N * dN;
+    }
+    return result;
 }
 
 // CAMERA
@@ -284,11 +299,11 @@ void Camera::render(const Scene& scene, size_t x_lower, size_t x_upper, size_t y
                 float dx = this->subpixelSize * ((float) rand()) / RAND_MAX;
                 float dy = this->subpixelSize * ((float) rand()) / RAND_MAX;
                 // Spawn a new ray from the active eye point going through the subpixel coordinate
-                glm::vec4 pixelCoord = glm::vec4(0.0, -(xi + dx), -(yi + dy) , 1.0);
-                glm::vec4 start = this->primaryEyeActive ? this->primaryEye : this->secondaryEye;
-                Ray ray = Ray{ start, (pixelCoord-start).xyz(), 1.0/samplesPerPixel };
+                glm::vec3 pixelCoord = glm::vec3(0.0, -(xi + dx), -(yi + dy));
+                glm::vec3 start = this->primaryEyeActive ? this->primaryEye : this->secondaryEye;
+                Ray ray = Ray{ start, pixelCoord-start, 1.0/samplesPerPixel };
 
-                pixel.color += scene.traceRay(ray) * ray.importance;
+                pixel.color += scene.traceRay(ray, 0) * ray.importance;
             }
 
             maxIntensity = glm::max(maxIntensity, pixel.color.r);
@@ -311,9 +326,9 @@ void Camera::create_image(const char* filename) {
             // Get the color of the pixel and transform to R, G, and B
             // TODO: Handle with operator overloading on Color instead?
             Color color = getImagePixel(x, y).color;
-            pixelColor.red   += 255.99 * pow(color.r / maxIntensity, 0.3);
-            pixelColor.green += 255.99 * pow(color.g / maxIntensity, 0.3);
-            pixelColor.blue  += 255.99 * pow(color.b / maxIntensity, 0.3);
+            pixelColor.red   += 255.99 * pow(color.r / maxIntensity, 0.5);
+            pixelColor.green += 255.99 * pow(color.g / maxIntensity, 0.5);
+            pixelColor.blue  += 255.99 * pow(color.b / maxIntensity, 0.5);
             // pixelColor.red   += 255.99 * log(1 + color.r / maxIntensity);
             // pixelColor.green += 255.99 * log(1 + color.g / maxIntensity);
             // pixelColor.blue  += 255.99 * log(1 + color.b / maxIntensity);
