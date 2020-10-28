@@ -1,6 +1,6 @@
 #pragma once
 // Required before including glm
-#define GLM_FORCE_SWIZZLE
+// #define GLM_FORCE_SWIZZLE
 
 // Standard library 
 #include <iostream>
@@ -8,10 +8,25 @@
 #include <array>
 #include <memory>
 #include <limits>
+#include <thread>
+#include <chrono>
 #include <math.h>
 // External libraries
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <png++/png.hpp>
+
+// Constants
+// const float IMPORTANCE_FALLOFF = 0.50;
+const double EPSILON = 0.00001;
+const float SHADOW_BIAS = 0.0001;
+const float MIN_ABSORPTION = 0.7;
+const float MAX_ABSORPTION = 0.9;
+const int LIGHT_SAMPLES = 1;
+const int PIXEL_SAMPLES = 1;
+const double LOCAL_LIGHTING_CONTRIBUTION = 0.3;
+const int INNER_REFLECTIONS_LIMIT = 1;
+const float AIR_INDEX = 1.0;
 
 // Forward declarations
 class Camera;
@@ -24,23 +39,8 @@ struct SceneObject;
 struct Triangle;
 struct Sphere;
 
-// struct Color {
-//     double r, g, b;
-
-//     Color operator*(double scalar) const {
-//         return { this->r * scalar, this->g * scalar, this->b * scalar };
-//     }
-
-//     Color operator+(const Color& other) const {
-//         return { this->r + other.r, this->g + other.g, this->b + other.b };
-//     }
-
-//     void operator+=(const Color& other) {
-//         *this = *this + other;
-//     }
-// };
-
 // Project header files
 #include "colors.hpp"
+#include "materials.hpp"
 #include "objects.hpp"
 #include "craytrace.hpp"

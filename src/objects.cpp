@@ -1,53 +1,5 @@
 #include "dependencies.hpp"
 
-// SCENE OBJECT
-
-Ray SceneObject::perfectReflection(const Ray& incoming) {
-    return Ray{
-        incoming.end,
-        glm::reflect(incoming.direction, this->calculateNormal(incoming.end)),
-        incoming.importance
-    };
-}
-
-Ray SceneObject::diffuseReflection(const Ray& incoming) {
-    // Local coordinate system
-    using namespace glm;
-    vec3 Z = this->calculateNormal(incoming.end);
-    vec3 X = normalize(incoming.direction - dot(incoming.direction, Z) * Z);
-    vec3 Y = cross(-X, Z);
-    // Transformation matrix for local coordinates
-    // float trans[] = {
-    //     1.0f, 0.0f, 0.0f, -incoming.end.x,
-    //     0.0f, 1.0f, 0.0f, -incoming.end.y,
-    //     0.0f, 0.0f, 1.0f, -incoming.end.z,
-    //     0.0f, 0.0f, 0.0f, 1.0f,
-    // };
-    float rot[] = {
-        X.x,  X.y,  X.z,  0.0f,
-        Y.x,  Y.y,  Y.z,  0.0f,
-        Z.x,  Z.y,  Z.z,  0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f,
-    };
-    mat4 M = make_mat4(rot); 
-    // Monte carlo method to randomly select ray direction in local hemispherical coordinates
-    float phi = 2 * M_PI * rand() / RAND_MAX;
-    float theta = asin(sqrt(((float) rand()) / RAND_MAX));
-    // Cartesian local coordinates for the direction
-    float x = cos(phi) * sin(theta);
-    float y = sin(phi) * sin(theta);
-    float z = cos(theta);
-    vec4 localDir = vec4(x, y, z, 0.0f);
-    // Transform direction to world coordinates
-    vec3 worldDir = inverse(M) * localDir * M;
-
-    return Ray {
-        incoming.end,
-        worldDir,
-        incoming.importance * 0.8 // HACK: This value should not be hard coded like this
-    };
-}
-
 // TRIANGLE
 
 float Triangle::rayIntersection(const Ray& ray) {
@@ -65,10 +17,12 @@ float Triangle::rayIntersection(const Ray& ray) {
 
     vec3 hit = (1/dot(P, E1)) * vec3(dot(Q, E2), dot(P, T), dot(Q, D));
 
-    if (hit.y < 0.0f || hit.z < 0.0f || hit.y + hit.z > 1.0f || hit.x < 0.00001f) {
+    if (hit.y < 0.0 || hit.z < 0.0 || hit.y + hit.z > 1.0f || hit.x < 0.0) {
         return -1.0;
     }
 
+    // auto test1 = (1-hit.y-hit.z)*this->v1 + hit.y*this->v2 + hit.z*this->v3;
+    // auto test2 = ray.start + vec4(ray.direction, 0.0) * hit.x;
     return hit.x;
 }
 
@@ -76,6 +30,22 @@ glm::vec3 Triangle::calculateNormal(glm::vec4 p) {
     return this->normal;
 }
 
+std::vector<Ray> Triangle::sampleShadowRays(glm::vec4 start) {
+    std::vector<Ray> rays;
+
+    for (int i = 0; i < LIGHT_SAMPLES; ++i) {
+        // Randomly select u and v coordinates
+        float u = ((float) rand()) / RAND_MAX;
+        float v = (1 - u) * ((float) rand()) / RAND_MAX;
+        glm::vec4 end = this->v1 * u + this->v2 * v + this->v3 * (1 - u - v);
+
+        rays.emplace_back( Ray{ start, end } );
+    }
+
+    return rays;
+}
+
+// SPHERE
 
 float Sphere::rayIntersection(const Ray& ray) {
     using namespace glm;
@@ -86,14 +56,14 @@ float Sphere::rayIntersection(const Ray& ray) {
 
     float pq = (b/2.0f)*(b/2.0f) - a*c;
 
-    if (pq < 0.0)
+    if (pq < EPSILON)
         return -1.0;
 
     float dpos = -(b/2.0f) + sqrt(pq);
     float dneg = -(b/2.0f) - sqrt(pq);
-    float d = abs(dpos) > abs(dneg) ? dneg : dpos;
+    float d = glm::min(dpos, dneg);
 
-    if (d < 0.00001f)
+    if (d < EPSILON)
         return  -1.0;
 
     return d;
@@ -102,5 +72,9 @@ float Sphere::rayIntersection(const Ray& ray) {
 glm::vec3 Sphere::calculateNormal(glm::vec4 p) {
     // Träffpunkten - radien
     glm::vec3 result = p.xyz - this->m.xyz;
-    return result;
+    return glm::normalize(result);
+}
+
+std::vector<Ray> Sphere::sampleShadowRays(glm::vec4 start) {
+    return { Ray{ start, this->m } };
 }

@@ -4,23 +4,23 @@ Implementation of a Monte-Carlo raytracer in C++. This project was done for the 
 ## Issues:
 - [*Should be resolved*] RGB values might not be normalized to [0, 255] in some cases
 - Möller-Trumbore check might fail sometimes due to floating point errors 
+- Area light source appears gray-ish when it should be white
+- Cosine term from rendering equation as `lightAmount` cause shadow-acne for some reason
 
 ## TODO:
-- [ ] Implement scene objects
-  - [x] Tetrahedron
-  - [ ] Sphere (implicitly with radius) *MOA*
-  - [x] Handle mutliple ray intersections, using the nearest intersection
 - [ ] Refactor code base
-  - [ ] Separate code into more files
+  - [x] Separate code into more files
   - [x] Collect forward-declarations in one header file, which is included first
   - [x] Replace `Color` with `glm::dvec3`
   - [ ] Use either `snake_case` or `camelCase` for variables/methods (`PascalCase` for classes)
   - [x] `Color` convenience methods and constants
-- [ ] Shadow rays on "local light check"
-  - Is there an intersection for the ray going from the object to the light source?
-- [ ] Handle "ray trees"
-  - [ ] Spawn more rays when intersecting something reflective/refractive
-  - [ ] Calculate intensity values for the ray by working from the ends to the original ray
+- [ ] Oren Nayar surfaces
+- [ ] Transparent surfaces
+- [ ] Set const rendering parameters
+  - [ ] Lightning sample amount
+  - [ ] Importance reduction 
+  - [ ] Russian roulette cutoff
+
 
 ## DONE:
 - [x] Walls
@@ -46,6 +46,15 @@ Implementation of a Monte-Carlo raytracer in C++. This project was done for the 
 - [x] Simple local lighting model
   - [x] Implement lights in the scene
   - [x] Check that the triangle normals make sense
+- [x] Implement scene objects
+  - [x] Tetrahedron
+  - [x] Sphere (implicitly with radius) *MOA*
+  - [x] Handle mutliple ray intersections, using the nearest intersection
+- [x] Shadow rays on "local light check"
+  - Is there an intersection for the ray going from the object to the light source?
+- [x] Handle "ray trees"
+  - [x] Spawn more rays when intersecting something reflective/refractive
+  - [x] Calculate intensity values for the ray by working from the ends to the original ray
 
 ## How to terminal (Guide for Dummies *cough* Moa)
 - Go up one directory: `cd ..`
