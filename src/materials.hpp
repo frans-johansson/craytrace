@@ -3,13 +3,13 @@
 
 struct Material {
     Color color;
-    float absorption; // MAX_ABSORPTION * (float)(glm::length(color) / glm::length(WHITE))
+    double absorption; // MAX_ABSORPTION * (double)(glm::length(color) / glm::length(WHITE))
     double emittance = 0.0;
     double localLightContribution = LOCAL_LIGHTING_CONTRIBUTION;
     bool blocksLight = true;
 
     Material(Color _color)
-    : color{_color}, absorption{MIN_ABSORPTION + (MAX_ABSORPTION - MIN_ABSORPTION) * (float)(glm::length(color) / glm::length(WHITE))} {}
+    : color{_color}, absorption{MIN_ABSORPTION + (MAX_ABSORPTION - MIN_ABSORPTION) * (double)(glm::length(color) / glm::length(WHITE))} {}
 
     virtual std::vector<Ray> nextRayBranch(const Ray& incoming);
     Ray perfectRefraction(const Ray& incoming); 
@@ -18,7 +18,7 @@ struct Material {
     Ray diffuseReflection(const Ray& incoming);
 
     virtual bool rayAbsorbed(const Ray &ray) {
-        float absorb = ((float)rand()) / RAND_MAX;
+        double absorb = ((double)rand()) / RAND_MAX;
         return absorb > this->absorption;
     }
     
@@ -60,10 +60,10 @@ struct PerfectReflector : Material {
 };
 
 struct PerfectRefractor : Material {
-    float index;
-    float maxAngle;
+    double index;
+    double maxAngle;
 
-    PerfectRefractor(float _index)
+    PerfectRefractor(double _index)
     : Material(WHITE), index{_index}, maxAngle{asin(AIR_INDEX / _index)} {
         this->localLightContribution = 0.0;
         this->blocksLight = false;
@@ -85,8 +85,8 @@ struct LambertianEmitter : Material {
 
 struct MaterialFactory {
     static std::unique_ptr<DiffuseLambertian> makeDiffuseLambertian(Color _color, double _rho = 0.2);
-    static std::unique_ptr<DiffuseOrenNayar> makeDiffuseOrenNayar(Color _color, double _rho = 0.1, double _sig = 0.5);
+    static std::unique_ptr<DiffuseOrenNayar> makeDiffuseOrenNayar(Color _color, double _rho = 0.2, double _sig = 0.5);
     static std::unique_ptr<PerfectReflector> makePerfectReflector();
-    static std::unique_ptr<PerfectRefractor> makePerfectRefractor(float index = 1.5);
+    static std::unique_ptr<PerfectRefractor> makePerfectRefractor(double index = 1.5);
     static std::unique_ptr<LambertianEmitter> makeLambertianEmitter(Color _color, double _emittance);
 };

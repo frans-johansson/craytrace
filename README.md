@@ -3,7 +3,7 @@ Implementation of a Monte-Carlo raytracer in C++. This project was done for the 
 
 ## Issues:
 - [*Should be resolved*] RGB values might not be normalized to [0, 255] in some cases
-- Möller-Trumbore check might fail sometimes due to floating point errors 
+- Möller-Trumbore check might fail sometimes due to doubleing point errors 
 - Area light source appears gray-ish when it should be white
 - Cosine term from rendering equation as `lightAmount` cause shadow-acne for some reason
 
@@ -40,8 +40,8 @@ Implementation of a Monte-Carlo raytracer in C++. This project was done for the 
 - [x] Get XYZ components from a `glm::DVec4`
 - [x] Changed dvec to vec
 - [x] Camera should have separate render and create_image functions
-  - [x] Render: Cast all the rays and calculate the floating point color values of each pixel
-  - [x] Create image: Convert the floating point RGB values to `png::byte`
+  - [x] Render: Cast all the rays and calculate the doubleing point color values of each pixel
+  - [x] Create image: Convert the doubleing point RGB values to `png::byte`
 - [x] Save render results to an image
   - [x] Convert from `double`-valued colors to 8 bit unsigned integer values
   - [x] Find a way to push pixel values into some kind of an image format in C++
